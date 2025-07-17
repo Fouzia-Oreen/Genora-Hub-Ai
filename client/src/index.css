@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+* {
+  font-family: "Outfit", sans-serif;
+}
+
+:root {
+  --color_1: #1F2228;
+  --color_2: #172554;
+  --color_3: #172554;
+  --color_4: #1D357B;
+  --color_5: #1D4ED8;
+  --color_6: #2563EB;
+  --color_7: #3B82F6;
+  --color_8: #60A5FA;
+  --color_9: #F3F5F8;
+  --color_10: #EA580C;
+  --color_11: #F97316;
+  --color_gradient_1: gradient from #F86D1D to #F14742;
+  --color_gradient_2: from #1D4ED8 to #1E3A8B;
+  --color_gradient_3: from #1E6FEB to #1D4ED8;
+}
+
+body {
+color: var(--color_1);
+}
+
+
+
+.btn1-grad {
+  background-image: linear-gradient(to right, #FF512F 0%, #F09819 51%, #FF512F 100%);
+  background-size: 200% auto;
+  color: var(--color_9);
+  border: none;
+  cursor: pointer;
+  transition: all 0.4s ease-in-out;
+  transform: rotate(-1.20deg); 
+}
+.btn1-grad:hover {
+  background-position: right center;
+  color: #fff;
+
+  text-decoration: none;
+}
+@keyframes gradientFlow {
+  0% { background-position: left center; }
+  100% { background-position: right center; }
+}
+.btn1-grad:hover {
+  animation: gradientFlow 1.5s linear forwards;
+}      
+
+.btn2-grad {
+  background-image: linear-gradient(to right, #2563EB 0%, #60A5FA 51%, #1D4ED8 100%)
+}
+.btn2-grad {
+  padding: 9px 25px;
+  text-align: center;
+  transition: 0.5s;
+  background-size: 200% auto;
+  color: var(--color_9);            
+  box-shadow: 0 0 20px #eee;
+  border-radius: 50px;
+  display: block;
+}
+
+.btn2-grad:hover {
+  background-position: right center; 
+  color: #fff;
+  text-decoration: none;
+}
+         
