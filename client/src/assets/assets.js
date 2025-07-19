@@ -5,7 +5,7 @@ import star_icon from "./star_icon.svg";
 import star_dull_icon from "./star_dull_icon.svg";
 import profile_img_1 from "./profile_img_1.png";
 import arrow_icon from "./arrow_icon.svg";
-import { SquarePen, Hash, Image, Eraser, Scissors, FileText } from 'lucide-react'
+import { SquarePen, Hash, Image, Eraser, Scissors, FileText, MessageCircle, Video, Mail, Search, Briefcase } from 'lucide-react'
 import ai_gen_img_1 from "./ai_gen_img_1.png";
 import ai_gen_img_2 from "./ai_gen_img_2.png";
 import ai_gen_img_3 from "./ai_gen_img_3.png";
@@ -20,52 +20,179 @@ export const assets = {
     arrow_icon,
 };
 
+export const categories = [
+  { label: 'All', value: 'all' },
+  { label: 'Writing & Content', value: 'writing' },
+  { label: 'Marketing & SEO', value: 'marketing' },
+  { label: 'Image Editing', value: 'image' }, 
+  { label: 'Career Tools', value: 'career' }, 
+];
 
 
+// export const AiToolsData = [
+//     {
+//         title: 'AI Article Writer',
+//         description: 'Generate high-quality, engaging articles on any topic with our AI writing technology.',
+//         Icon: SquarePen,
+//         bg: { from: '#0073FF', to: '#00C3FF' },
+//         path: '/ai/write-article'
+//     },
+//     {
+//         title: 'Blog Title Generator',
+//         description: 'Find the perfect, catchy title for your blog posts with our AI-powered generator.',
+//         Icon: Hash,
+//         bg: { from: '#A83378', to: '#F857A4' },
+//         path: '/ai/blog-titles'
+//     },
+//     {
+//         title: 'AI Image Generation',
+//         description: 'Create stunning visuals with our AI image generation tool, Experience the power of AI ',
+//         Icon: Image,
+//         bg: { from: '#20C363', to: '#20996E' },
+//         path: '/ai/generate-images'
+//     },
+//     {
+//         title: 'Background Removal',
+//         description: 'Effortlessly remove backgrounds from your images with our AI-driven tool.',
+//         Icon: Eraser,
+//         bg: { from: '#FF4D21', to: '#FF8F67' },
+//         path: '/ai/remove-background'
+//     },
+//     {
+//         title: 'Object Removal',
+//         description: 'Remove unwanted objects from your images seamlessly with our AI object removal tool.',
+//         Icon: Scissors,
+//         bg: { from: '#673AB7', to: '#A044FF' },
+//         path: '/ai/remove-object'
+//     },
+//     {
+//         title: 'Resume Reviewer',
+//         description: 'Get your resume reviewed by AI to improve your chances of landing your dream job.',
+//         Icon: FileText,
+//         bg: { from: '#F2C84C', to: '#F29A4A' },
+//         path: '/ai/review-resume'
+//     },
+//     {
+//     title: 'Social Media Caption Generator',
+//     description: 'Generate engaging, platform-specific captions for your social media posts instantly.',
+//     Icon: MessageCircle,
+//     bg: { from: '#6EE7B7', to: '#3B82F6' },
+//     path: '/ai/social-caption-generator'
+// },
+// {
+//     title: 'YouTube Script Generator',
+//     description: 'Create compelling video scripts with structured intros, content flow, and CTAs.',
+//     Icon: Video,
+//     bg: { from: '#FCA5A5', to: '#F87171' },
+//     path: '/ai/youtube-script-generator'
+// },
+// {
+//     title: 'AI Email Responder',
+//     description: 'Draft smart and professional replies to your emails with just a few clicks.',
+//     Icon: Mail,
+//     bg: { from: '#C084FC', to: '#9333EA' },
+//     path: '/ai/email-responder'
+// },
+// {
+//     title: 'SEO Keyword Suggestion Tool',
+//     description: 'Get high-ranking keyword suggestions to boost your content’s SEO performance.',
+//     Icon: Search,
+//     bg: { from: '#FDE68A', to: '#F59E0B' },
+//     path: '/ai/seo-keyword-suggester'
+// }
+// ]
 export const AiToolsData = [
-    {
-        title: 'AI Article Writer',
-        description: 'Generate high-quality, engaging articles on any topic with our AI writing technology.',
-        Icon: SquarePen,
-        bg: { from: '#0073FF', to: '#00C3FF' },
-        path: '/ai/write-article'
-    },
-    {
-        title: 'Blog Title Generator',
-        description: 'Find the perfect, catchy title for your blog posts with our AI-powered generator.',
-        Icon: Hash,
-        bg: { from: '#A83378', to: '#F857A4' },
-        path: '/ai/blog-titles'
-    },
-    {
-        title: 'AI Image Generation',
-        description: 'Create stunning visuals with our AI image generation tool, Experience the power of AI ',
-        Icon: Image,
-        bg: { from: '#20C363', to: '#20996E' },
-        path: '/ai/generate-images'
-    },
-    {
-        title: 'Background Removal',
-        description: 'Effortlessly remove backgrounds from your images with our AI-driven tool.',
-        Icon: Eraser,
-        bg: { from: '#FF4D21', to: '#FF8F67' },
-        path: '/ai/remove-background'
-    },
-    {
-        title: 'Object Removal',
-        description: 'Remove unwanted objects from your images seamlessly with our AI object removal tool.',
-        Icon: Scissors,
-        bg: { from: '#673AB7', to: '#A044FF' },
-        path: '/ai/remove-object'
-    },
-    {
-        title: 'Resume Reviewer',
-        description: 'Get your resume reviewed by AI to improve your chances of landing your dream job.',
-        Icon: FileText,
-        bg: { from: '#F2C84C', to: '#F29A4A' },
-        path: '/ai/review-resume'
-    }
-]
+  {
+    title: 'AI Article Writer',
+    description: 'Generate high-quality, engaging articles on any topic with our AI writing technology.',
+    Icon: SquarePen,
+    bg: { from: '#0073FF', to: '#00C3FF' },
+    path: '/ai/write-article',
+    category: 'writing'
+  },
+  {
+    title: 'Blog Title Generator',
+    description: 'Find the perfect, catchy title for your blog posts with our AI-powered generator.',
+    Icon: Hash,
+    bg: { from: '#A83378', to: '#F857A4' },
+    path: '/ai/blog-titles',
+    category: 'writing'
+  },
+  {
+    title: 'AI Image Generation',
+    description: 'Create stunning visuals with our AI image generation tool. Experience the power of AI.',
+    Icon: Image,
+    bg: { from: '#20C363', to: '#20996E' },
+    path: '/ai/generate-images',
+    category: 'image'
+  },
+  {
+    title: 'Background Removal',
+    description: 'Effortlessly remove backgrounds from your images with our AI-driven tool.',
+    Icon: Eraser,
+    bg: { from: '#FF4D21', to: '#FF8F67' },
+    path: '/ai/remove-background',
+    category: 'image'
+  },
+  {
+    title: 'Object Removal',
+    description: 'Remove unwanted objects from your images seamlessly with our AI object removal tool.',
+    Icon: Scissors,
+    bg: { from: '#673AB7', to: '#A044FF' },
+    path: '/ai/remove-object',
+    category: 'image'
+  },
+  {
+    title: 'Resume Reviewer',
+    description: 'Get your resume reviewed by AI to improve your chances of landing your dream job.',
+    Icon: FileText,
+    bg: { from: '#F2C84C', to: '#F29A4A' },
+    path: '/ai/review-resume',
+    category: 'career'
+  },
+  {
+    title: 'Resume Builder',
+    description: 'Easily create a professional resume with AI-suggested templates and content.',
+    Icon: Briefcase,
+    bg: { from: '#6366F1', to: '#8B5CF6' }, // Indigo to Violet
+    path: '/ai/resume-builder',
+    category: 'career'
+  },
+  {
+    title: 'Social Media Caption Generator',
+    description: 'Generate engaging, platform-specific captions for your social media posts instantly.',
+    Icon: MessageCircle,
+    bg: { from: '#6EE7B7', to: '#3B82F6' },
+    path: '/ai/social-caption-generator',
+    category: 'marketing'
+  },
+  {
+    title: 'YouTube Script Generator',
+    description: 'Create compelling video scripts with structured intros, content flow, and CTAs.',
+    Icon: Video,
+    bg: { from: '#FCA5A5', to: '#F87171' },
+    path: '/ai/youtube-script-generator',
+    category: 'writing'
+  },
+  {
+    title: 'AI Email Responder',
+    description: 'Draft smart and professional replies to your emails with just a few clicks.',
+    Icon: Mail,
+    bg: { from: '#C084FC', to: '#9333EA' },
+    path: '/ai/email-responder',
+    category: 'career'
+  },
+  {
+    title: 'SEO Keyword Suggestion Tool',
+    description: 'Get high-ranking keyword suggestions to boost your content’s SEO performance.',
+    Icon: Search,
+    bg: { from: '#FDE68A', to: '#F59E0B' },
+    path: '/ai/seo-keyword-suggester',
+    category: 'marketing'
+  }
+];
+
+
 export const dummyTestimonialData = [
     {
         image: 'https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200',
