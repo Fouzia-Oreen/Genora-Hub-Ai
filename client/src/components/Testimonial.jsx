@@ -3,7 +3,7 @@ import { dummyTestimonialData } from '../assets/assets'
 
 const Testimonial = () => {
     return (
-        <div className='px-4 sm:px-20 xl:px-32 py-20'>
+        <div className='px-4 sm:px-20 xl:px-32 my-20'>
             <div className='text-center'>
                 <h2 className='text-color_4 text-[42px] font-semibold'>Loved by Creators</h2>
                 <p className='text-color_2/60 max-w-lg mx-auto'>Don't just take our word for it. Here's what our users are saying.</p>
