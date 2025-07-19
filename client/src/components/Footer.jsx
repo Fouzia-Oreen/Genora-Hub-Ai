@@ -8,11 +8,11 @@ const Footer = () => {
             <div className="md:max-w-96">
                 <Link to="/" className='flex items-center'>
                 <img className="h-9" src={genora} alt="dummyLogoDark" />
-                <span className="bg-gradient-2 text-3xl text-transparent bg-clip-text font-bold px-2 rounded-lg inline-block">Genora AI</span>
+                <span className="bg-gradient-2 text-3xl text-transparent bg-clip-text font-bold px-2 rounded-lg inline-block">Genora.AI</span>
                 </Link>
 
                 <p className="mt-6 text-sm">
-                Genora Hub is your all-in-one AI toolkit for creating content, images, and resumes—fast, smart, and effortlessly.
+                "Genora.Ai is your all-in-one AI platform to effortlessly create compelling content, stunning visuals, and professional resumes — faster and smarter than ever."
                 </p>
             </div>
             <div className="flex-1 flex items-start md:justify-end gap-20">
