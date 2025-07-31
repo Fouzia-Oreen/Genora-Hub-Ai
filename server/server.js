@@ -8,18 +8,14 @@ import { auth } from './middlewares/auth.js';
 import aiRouter from './routes/aiRoutes.js';
 import userRouter from './routes/userRoutes.js';
 
-const PORT = process.env.PORT || 3000;
+const PORT = 3090;
 const app = express();
 
 const startServer = async () => {
   await connectCloudinary();
   await connectDb(); 
 
-  app.use(cors({
-    origin: process.env.CLIENT_URL || "*",
-    methods: ['GET', 'POST', 'PUT', 'DELETE'],
-    allowedHeaders: ['Content-Type', 'Authorization']
-  }));
+  app.use(cors());
 
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
