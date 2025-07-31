@@ -732,7 +732,7 @@ export const generateCoverLetter = async (req, res) => {
       prompt: finalPrompt,
       content: generatedCoverLetter,
       type: `cover-letter-${selectedTone}`,
-      publish: false, // Cover letters are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: generatedCoverLetter.trim() });
@@ -745,37 +745,33 @@ export const generateCoverLetter = async (req, res) => {
 export const generateEmailResponse = async (req, res) => {
   try {
     const { emailText, tone } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
-    const { plan, emailResponseDailyCount } = user; // Access from req.user
+    const { user } = req; 
+    const { plan, emailResponseDailyCount } = user; 
 
     if (!emailText || emailText.trim() === '') {
       return res.status(400).json({ success: false, message: 'Email text is required.' });
     }
 
-    // --- Access Control based on Plan ---
-    // Launch plan does not have access to this feature
     if (plan === 'launch') {
       return res.status(403).json({ success: false, message: 'This feature is not available for the Launch plan. Upgrade to Creator or Studio.' });
     }
-    // Apply daily usage limit for 'creator' and 'studio' plans
-    if ((plan === 'creator' || plan === 'studio') && emailResponseDailyCount >= 10) { // Assuming 10 is the daily limit
+
+    if ((plan === 'creator' || plan === 'studio') && emailResponseDailyCount >= 10) { 
       return res.json({ success: false, message: 'Daily usage limit exceeded for Email Response (10 per day). Try again tomorrow.' });
     }
 
-    // Craft prompt for the AI model
     let finalPrompt = `Generate a ${tone} email response to the following email:\n\n"${emailText}"\n\nEnsure the response is polite, relevant, and addresses the key points of the original email.`;
 
-    // Call the AI model (Gemini 2.0 Flash)
     const response = await AI.chat.completions.create({
       model: 'gemini-2.0-flash',
       messages: [{ role: 'user', content: finalPrompt }],
       temperature: 0.7,
-      max_tokens: 700, // Sufficient tokens for an email response
+      max_tokens: 700, 
     });
 
     const generatedEmailResponse = response.choices[0].message.content;
 
-    // Increment usage for 'creator' or 'studio' plans for this limited feature in MongoDB
+
     if (plan === 'creator' || plan === 'studio') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -783,13 +779,12 @@ export const generateEmailResponse = async (req, res) => {
       );
     }
 
-    // Store the creation in the database
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalPrompt,
       content: generatedEmailResponse,
       type: `email-response-${tone}`,
-      publish: false, // Email responses are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: generatedEmailResponse.trim() });
@@ -802,8 +797,8 @@ export const generateEmailResponse = async (req, res) => {
 
 export const resumeReview = async (req, res) => {
   try {
-    const { user } = req; // Get MongoDB user from req.user
-    const { plan, reviewResumeDailyCount } = user; // Access from req.user
+    const { user } = req; 
+    const { plan, reviewResumeDailyCount } = user; 
 
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'Resume file is required.' });
@@ -884,7 +879,6 @@ export const resumeReview = async (req, res) => {
 
     const { review_text, performance_score, excel_feedback } = parsedResult;
 
-    // Increment usage for Creator/Studio plans in MongoDB
     if (plan === 'creator' || plan === 'studio') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -892,13 +886,12 @@ export const resumeReview = async (req, res) => {
       );
     }
 
-    // Store creation in MongoDB
     await Creation.create({
       userId: user.clerkUserId,
-      prompt: prompt, // Store the full prompt sent to AI
-      content: JSON.stringify({ review_text, performance_score, excel_feedback }), // Store the AI response as a stringified JSON
+      prompt: prompt, 
+      content: JSON.stringify({ review_text, performance_score, excel_feedback }), 
       type: 'resume-review',
-      publish: false, // Resume reviews are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, review_text, performance_score, excel_feedback, parsed_resume_text: resumeContentText });

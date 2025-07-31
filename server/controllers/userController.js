@@ -242,11 +242,10 @@ export const createResume = async (req, res) => {
       return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
     }
 
-    // Apply daily usage limit for 'studio' plan
     if (plan === 'studio' && builtResumeDailyCount >= 10) { 
       return res.json({ success: false, message: 'Daily usage limit exceeded for Built Your Resume (10 per day). Try again tomorrow.' });
     }
-    // Launch and Creator plans do not have access to this feature
+
     if (plan === 'launch' || plan === 'creator') {
       return res.status(403).json({ success: false, message: 'This feature is not available for your current plan. Upgrade to Studio.' });
     }
@@ -257,7 +256,6 @@ export const createResume = async (req, res) => {
       ...resumeData, 
     });
 
-    // Increment usage for 'studio' plan in MongoDB
     if (plan === 'studio') {
       await User.updateOne(
         { _id: mongoUserId },
@@ -356,9 +354,8 @@ export const updateUserResume = async (req, res) => {
 
 export const deleteUserResume = async (req, res) => {
   try {
-    const mongoUserId = getMongoUserId(req); // Get MongoDB's _id from req.user
-    const { id: resumeId } = req.params; // Get resume ID from URL parameters
-
+    const mongoUserId = getMongoUserId(req); 
+    const { id: resumeId } = req.params; 
     if (!mongoUserId) {
       return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
     }
@@ -366,7 +363,6 @@ export const deleteUserResume = async (req, res) => {
       return res.status(400).json({ success: false, message: 'Resume ID is required.' });
     }
 
-    // Find and delete the resume by its _id and ensure it belongs to the authenticated user
     const deletedResume = await Resume.findOneAndDelete({ _id: resumeId, userId: mongoUserId });
 
     if (!deletedResume) {
