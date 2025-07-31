@@ -8,12 +8,21 @@ import { auth } from './middlewares/auth.js';
 import aiRouter from './routes/aiRoutes.js';
 import userRouter from './routes/userRoutes.js';
 
-
 const app = express();
 
+const initializeApp = async () => {
+    try {
+        await connectCloudinary();
+        await connectDb();
+        console.log('Successfully connected to all services.');
+    } catch (error) {
+        console.error('Failed to initialize application:', error);
+        process.exit(1);
+    }
+};
 
-connectCloudinary();
-connectDb(); 
+
+initializeApp();
 
 app.use(cors());
 app.use(express.json());
