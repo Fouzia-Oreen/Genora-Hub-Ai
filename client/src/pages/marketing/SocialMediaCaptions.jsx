@@ -233,7 +233,7 @@ const SocialMediaCaptions = () => {
             <MessageCircle className='w-5' />
             <h1 className='text-xl font-semibold'>Generated Caption</h1>
           </div>
-          <CopyDownloadButtons onCopy={handleCopy} onDownload={handleDownloadPDF} />
+          <CopyDownloadButtons onCopy={handleCopy}  />
         </div>
 
 

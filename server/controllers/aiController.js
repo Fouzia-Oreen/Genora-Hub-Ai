@@ -26,7 +26,7 @@ cloudinary.config({
 export const generateArticle = async (req, res) => {
   try {
     const { prompt, length } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req; 
     const { plan, freeUsage } = user;
 
     if (!prompt) {
@@ -46,16 +46,14 @@ export const generateArticle = async (req, res) => {
 
     const content = response.choices[0].message.content;
 
-    // Store creation in MongoDB
     await Creation.create({
-      userId: user.clerkUserId, // Use Clerk's userId from MongoDB user document
+      userId: user.clerkUserId, 
       prompt: prompt,
       content: content,
       type: 'article',
-      publish: false, // Articles are not public by default
+      publish: false, 
     });
 
-    // Increment free usage for 'launch' plan in MongoDB
     if (plan === 'launch') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -73,7 +71,7 @@ export const generateArticle = async (req, res) => {
 export const generateBlogTitleAndDescription = async (req, res) => {
   try {
     const { prompt, tab, category, descLength } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req; 
     const { plan, freeUsage } = user;
 
     if (!prompt) {
@@ -106,16 +104,14 @@ export const generateBlogTitleAndDescription = async (req, res) => {
 
     const content = response.choices[0].message.content;
 
-    // Store creation in MongoDB
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalPrompt,
       content: content,
       type: `blog-${tab.toLowerCase()}`,
-      publish: false, // Blogs are not public by default
+      publish: false, 
     });
 
-    // Increment free usage for 'launch' plan in MongoDB
     if (plan === 'launch') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -133,7 +129,7 @@ export const generateBlogTitleAndDescription = async (req, res) => {
 export const summarizeText = async (req, res) => {
   try {
     const { inputText, selectedLength } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req; 
     const { plan, freeUsage } = user;
 
     if (!inputText || inputText.trim() === '') {
@@ -156,7 +152,6 @@ export const summarizeText = async (req, res) => {
 
     const generatedSummary = response.choices[0].message.content;
 
-    // Increment free usage for 'launch' plan in MongoDB
     if (plan === 'launch') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -164,13 +159,12 @@ export const summarizeText = async (req, res) => {
       );
     }
 
-    // Store creation in MongoDB
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalPrompt,
       content: generatedSummary,
       type: `text-summary-${selectedLength}`,
-      publish: false, // Summaries are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: generatedSummary.trim() });
@@ -183,7 +177,7 @@ export const summarizeText = async (req, res) => {
 export const processGrammarAndRewrite = async (req, res) => {
   try {
     const { inputText, selectedAction, selectedTone } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req;
     const { plan, freeUsage } = user;
 
     if (!inputText || inputText.trim() === '') {
@@ -229,7 +223,6 @@ export const processGrammarAndRewrite = async (req, res) => {
 
     const processedText = response.choices[0].message.content;
 
-    // Increment free usage for 'launch' plan in MongoDB
     if (plan === 'launch') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -237,13 +230,12 @@ export const processGrammarAndRewrite = async (req, res) => {
       );
     }
 
-    // Store creation in MongoDB
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalPrompt,
       content: processedText,
       type: typeForDb,
-      publish: false, // Grammar/rewrites are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: processedText.trim() });
@@ -258,7 +250,7 @@ export const processGrammarAndRewrite = async (req, res) => {
 export const generateSocialMediaCaption = async (req, res) => {
   try {
     const { prompt, selectedPlatform, selectedTone, wordCount, includeEmojis, includeHashtags } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req;
     const { plan, freeUsage } = user;
 
     const platformRules = {
@@ -310,7 +302,6 @@ export const generateSocialMediaCaption = async (req, res) => {
       generatedCaption = generatedCaption.slice(0, maxLength - 3) + '...';
     }
 
-    // Increment free usage for 'launch' plan in MongoDB
     if (plan === 'launch') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -318,13 +309,13 @@ export const generateSocialMediaCaption = async (req, res) => {
       );
     }
 
-    // Store creation in MongoDB
+
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalPrompt,
       content: generatedCaption,
       type: `social-caption-${selectedPlatform.toLowerCase()}`,
-      publish: false, // Captions are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: generatedCaption.trim() });
@@ -337,7 +328,7 @@ export const generateSocialMediaCaption = async (req, res) => {
 export const generateAdCopy = async (req, res) => {
   try {
     const { productService, keySellingPoints, selectedPlatform, selectedTone, selectedAdType } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req; 
     const { plan, freeUsage } = user;
 
     if (!productService || productService.trim() === '') {
@@ -366,7 +357,6 @@ export const generateAdCopy = async (req, res) => {
 
     const generatedAdCopy = response.choices[0].message.content;
 
-    // Increment free usage for 'launch' plan in MongoDB
     if (plan === 'launch') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -374,13 +364,12 @@ export const generateAdCopy = async (req, res) => {
       );
     }
 
-    // Store creation in MongoDB
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalPrompt,
       content: generatedAdCopy,
       type: `ad-copy-${selectedPlatform.toLowerCase().replace(/\s/g, '-')}-${selectedTone.toLowerCase()}-${selectedAdType.toLowerCase().replace(/\s/g, '-')}`,
-      publish: false, // Ad copies are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: generatedAdCopy.trim() });
@@ -393,7 +382,7 @@ export const generateAdCopy = async (req, res) => {
 export const generateProductDescription = async (req, res) => {
   try {
     const { productName, keyFeatures, targetAudience, selectedTone, selectedLength } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req; 
     const { plan, freeUsage } = user;
 
     if (!productName || productName.trim() === '') {
@@ -424,7 +413,6 @@ export const generateProductDescription = async (req, res) => {
 
     const generatedDescription = response.choices[0].message.content;
 
-    // Increment free usage for 'launch' plan in MongoDB
     if (plan === 'launch') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -432,13 +420,13 @@ export const generateProductDescription = async (req, res) => {
       );
     }
 
-    // Store creation in MongoDB
+
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalPrompt,
       content: generatedDescription,
       type: `product-description-${selectedTone}-${selectedLength}`,
-      publish: false, // Product descriptions are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: generatedDescription.trim() });
@@ -451,8 +439,8 @@ export const generateProductDescription = async (req, res) => {
 export const generateYouTubeScript = async (req, res) => {
   try {
     const { topic, selectedVibe } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
-    const { plan, youtubeScriptDailyCount } = user; // Access from req.user
+    const { user } = req;
+    const { plan, youtubeScriptDailyCount } = user; 
 
     if (!topic || topic.trim() === '') {
       return res.status(400).json({ success: false, message: 'Topic is required.' });
@@ -479,7 +467,6 @@ export const generateYouTubeScript = async (req, res) => {
 
     const generatedScript = response.choices[0].message.content;
 
-    // Increment usage for 'creator' plan in MongoDB
     if (plan === 'creator') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
@@ -487,13 +474,12 @@ export const generateYouTubeScript = async (req, res) => {
       );
     }
 
-    // Store creation in MongoDB
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalPrompt,
       content: generatedScript,
       type: `youtube-script-${selectedVibe.toLowerCase()}`,
-      publish: false, // YouTube scripts are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: generatedScript.trim() });
@@ -508,18 +494,20 @@ export const generateYouTubeScript = async (req, res) => {
 export const generateImages = async (req, res) => {
   try {
     const { prompt, selectedImageStyle, publish } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
-    const { plan, imageGenerationDailyCount } = user; // Access from req.user
+    const { user } = req; 
+    const { plan, imageGenerationDailyCount } = user; 
 
     if (!prompt || prompt.trim() === '') {
       return res.status(400).json({ success: false, message: 'Image prompt is required.' });
     }
 
     if (plan === 'launch') {
-      return res.status(403).json({ success: false, message: 'This feature is not available for the Launch plan. Upgrade to Creator or Studio.' });
+      if (imageGenerationDailyCount >= 3) {
+        return res.status(403).json({ success: false, message: 'Daily usage limit exceeded for Image Generation (3 images per day). Upgrade to Creator or Studio.' });
+      }
     } else if (plan === 'creator') {
       if (imageGenerationDailyCount >= 10) {
-        return res.json({ success: false, message: 'Daily usage limit exceeded for Image Generation (10 images per day). Upgrade to Studio or try again tomorrow.' });
+        return res.status(403).json({ success: false, message: 'Daily usage limit exceeded for Image Generation (10 images per day). Upgrade to Studio or try again tomorrow.' });
       }
     }
 
@@ -547,22 +535,21 @@ export const generateImages = async (req, res) => {
       folder: 'Genora',
     });
 
-    // Increment usage for Creator/Studio plans in MongoDB User document
-    if (plan === 'creator') { // Studio is unlimited for image generation
+    
+    if (plan === 'launch' || plan === 'creator') {
       await User.updateOne(
         { clerkUserId: user.clerkUserId },
         { $inc: { imageGenerationDailyCount: 1 } }
       );
     }
 
-    // Store the creation in the MongoDB 'creations' collection
     await Creation.create({
       userId: user.clerkUserId,
       prompt: finalClipdropPrompt,
       content: secure_url,
       type: `image-generation-${selectedImageStyle.toLowerCase().replace(/\s/g, '-')}`,
-      publish: publish, // Use the boolean value directly
-      likes: [], // Initialize with an empty array
+      publish: publish,
+      likes: [],
     });
 
     res.json({ success: true, secure_url });
@@ -579,28 +566,49 @@ export const removeBackground = async (req, res) => {
   try {
     const { user } = req;
     const { plan } = user;
-    const imagePath = req.file.path; // Multer provides the temp file path
+    const imagePath = req.file.path;
 
     if (!req.file) {
       return res.status(400).json({ success: false, message: 'Image file is required.' });
     }
 
     if (plan === 'launch') {
-      return res.status(403).json({ success: false, message: 'This feature is not available for the Launch plan. Upgrade to Creator or Studio.' });
+      if (backgroundRemovalDailyCount >= 3) {
+        return res.status(403).json({ success: false, message: 'Daily usage limit exceeded for Background Removal (3 images per day). Upgrade to Creator or Studio.' });
+      }
+    } else if (plan === 'creator') {
+      if (backgroundRemovalDailyCount >= 10) {
+        return res.status(403).json({ success: false, message: 'Daily usage limit exceeded for Background Removal (10 images per day). Upgrade to Studio or try again tomorrow.' });
+      }
     }
 
-    // This is the correct way to apply the transformation
-    const { secure_url } = await cloudinary.uploader.upload(imagePath, {
-      folder: 'Genora',
-      transformation: [
-        { effect: 'background_removal' } // This is the key part
-      ]
+    const formData = new FormData();
+    formData.append('image_file', fs.createReadStream(imagePath));
+
+    const { data } = await axios.post('https://clipdrop-api.co/remove-background/v1', formData, {
+      headers: {
+        ...formData.getHeaders(),
+        'x-api-key': process.env.CLIPDROP_API_KEY,
+      },
+      responseType: 'arraybuffer',
     });
 
-    // ... (store creation in MongoDB)
+    const base64Image = `data:image/png;base64,${Buffer.from(data, 'binary').toString('base64')}`;
+
+    const { secure_url } = await cloudinary.uploader.upload(base64Image, {
+      folder: 'Genora',
+    });
+
+    if (plan === 'launch') {
+      await User.updateOne(
+        { clerkUserId: user.clerkUserId },
+        { $inc: { backgroundRemovalDailyCount: 1 } }
+      );
+    }
+
     await Creation.create({
       userId: user.clerkUserId,
-      prompt: 'Background removed',
+      prompt: 'Background removed with Clipdrop',
       content: secure_url,
       type: 'background-removal',
       publish: false,
@@ -610,14 +618,9 @@ export const removeBackground = async (req, res) => {
   } catch (error) {
     console.error('Error removing background:', error);
     if (error.response && error.response.data) {
-      console.error('Cloudinary error response data:', error.response.data); // Look for this in your backend logs
+      console.error('API error response data:', error.response.data);
     }
-    // Add more specific error handling if Cloudinary returns a known error for add-on missing
-    if (error.message.includes('generative_remove is not enabled') || (error.response && error.response.data && error.response.data.error && error.response.data.error.message.includes('generative_remove is not enabled'))) {
-      res.status(400).json({ success: false, message: 'Cloudinary Generative AI add-on is not enabled for your account. Please enable it to use this feature.' });
-    } else {
-      res.status(500).json({ success: false, message: error.message || 'An error occurred during background removal.' });
-    }
+    res.status(500).json({ success: false, message: error.message || 'An error occurred during background removal.' });
   } finally {
     if (req.file && req.file.path) {
       fs.unlink(req.file.path, (err) => {
@@ -628,10 +631,9 @@ export const removeBackground = async (req, res) => {
 };
 
 export const removeObject = async (req, res) => {
-  // Ensure 'fs' is imported at the top of the file
   try {
     const { object } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req; 
     const { plan } = user;
     const imagePath = req.file.path;
 
@@ -655,13 +657,12 @@ export const removeObject = async (req, res) => {
       resource_type: 'image'
     });
 
-    // Store creation in MongoDB
     await Creation.create({
       userId: user.clerkUserId,
       prompt: `Removed '${object}' from image`,
       content: imageUrl,
       type: 'object-removal',
-      publish: false, // Object removals are not public by default
+      publish: false, 
     });
 
     res.json({ success: true, content: imageUrl });
@@ -689,7 +690,7 @@ export const removeObject = async (req, res) => {
 export const generateCoverLetter = async (req, res) => {
   try {
     const { resumeText, jobDescription, selectedTone } = req.body;
-    const { user } = req; // Get MongoDB user from req.user
+    const { user } = req;
     const { plan, freeUsage } = user;
 
     if (!resumeText || resumeText.trim() === '') {

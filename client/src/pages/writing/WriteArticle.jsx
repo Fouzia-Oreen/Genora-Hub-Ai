@@ -53,25 +53,23 @@ const WriteArticle = () => {
 
 
   const handleDownloadPDF = () => {
-    if (!article.trim()) {
-      toast.error('No summary to download as PDF.');
-      return;
-    }
+      if (!article.trim()) {
+        toast.error('No article to download as PDF.');
+        return;
+      }
 
-    const doc = new jsPDF(); 
+      const doc = new jsPDF(); 
+      doc.setFontSize(18);
+      doc.text(`Generated Article: ${input}`, 14, 22);
 
-    doc.setFontSize(18);
-    doc.text(`Generated ${selectedLength} Article`, 14, 22);
+      doc.setFontSize(14);
+      // splitTextToSize is a great way to handle long text
+      const splitText = doc.splitTextToSize(article, 180);
+      doc.text(splitText, 14, 30); 
 
-
-    doc.setFontSize(14);
-
-    const splitText = doc.splitTextToSize(article, 180);
-    doc.text(splitText, 14, 30); 
-
-    // Save the PDF
-    doc.save(`summary_${selectedLength}.pdf`);
-    toast.success('Summary downloaded as PDF!');
+      // Save the PDF using the article topic in the filename
+      doc.save(`article_${input.substring(0, 30).replace(/\s/g, '_')}.pdf`);
+      toast.success('Article downloaded as PDF!');
   };
 
   return (

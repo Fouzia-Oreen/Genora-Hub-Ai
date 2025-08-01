@@ -75,24 +75,23 @@ const GrammarRewriter = () => {
 
 
   const handleDownloadPDF = () => {
-    if (!processedText.trim()) {
-      toast.error('No text to download as PDF.');
-      return;
-    }
+      if (!processedText.trim()) {
+        toast.error('No article to download as PDF.');
+        return;
+      }
 
-    const doc = new jsPDF();
+      const doc = new jsPDF(); 
+      doc.setFontSize(18);
+      doc.text(`Generated Article: ${inputText}`, 14, 22);
 
-    doc.setFontSize(18);
-    doc.text(`Processed Text - ${selectedAction.charAt(0).toUpperCase() + selectedAction.slice(1)}`, 14, 22);
+      doc.setFontSize(14);
+      // splitTextToSize is a great way to handle long text
+      const splitText = doc.splitTextToSize(processedText, 180);
+      doc.text(splitText, 14, 30); 
 
-    doc.setFontSize(14);
-
-    const splitText = doc.splitTextToSize(processedText, 180); 
-    doc.text(splitText, 14, 30); 
-
-    // Save the PDF
-    doc.save(`processed_text_${selectedAction.replace(/\s/g, '-')}.pdf`);
-    toast.success('Processed text downloaded as PDF!');
+      // Save the PDF using the article topic in the filename
+      doc.save(`article_${inputText.substring(0, 30).replace(/\s/g, '_')}.pdf`);
+      toast.success('Article downloaded as PDF!');
   };
 
   return (

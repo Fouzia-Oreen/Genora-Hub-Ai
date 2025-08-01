@@ -1,20 +1,15 @@
 import express from 'express';
-import { upload } from '../config/multer.js'; 
-import { auth } from '../middlewares/auth.js'; 
+import { upload } from '../config/multer.js';
+import { auth } from '../middlewares/auth.js';
 
 import {
-    createResume,
     deleteCreation,
-    deleteUserResume,
     getPublishedCreations,
-    getResumesById,
     getUserCreations,
     getUserProfile,
-    getUsersResume,
     toggleLikedCreations,
-    updateUserResume,
     uploadProfileImage
-} from '../controllers/userController.js'; 
+} from '../controllers/userController.js';
 
 const userRouter = express.Router();
 
@@ -28,10 +23,10 @@ userRouter.post('/creations/toggle-like', auth, toggleLikedCreations);
 userRouter.delete('/creations/:id', auth, deleteCreation);
 
 // --- NEW RESUME ROUTES ---
-userRouter.post('/resumes', auth, createResume); 
-userRouter.get('/resumes', auth, getUsersResume); 
-userRouter.get('/resumes/:id', auth, getResumesById); 
-userRouter.put('/resumes/:id', auth, updateUserResume); 
-userRouter.delete('/resumes/:id', auth, deleteUserResume); 
+// userRouter.post('/resumes', auth, createResume); 
+// userRouter.get('/resumes', auth, getUsersResume); 
+// userRouter.get('/resumes/:id', auth, getResumesById); 
+// userRouter.put('/resumes/:id', auth, updateUserResume); 
+// userRouter.delete('/resumes/:id', auth, deleteUserResume); 
 
 export default userRouter;

@@ -136,7 +136,7 @@ const Community = () => {
 
 
   return (
-    <div className='panel'>
+    <div className='flex-1 h-screen flex flex-col gap-4 p-6 mt-20 lg:mx-12 md:mt-12 overflow-y-scroll hide-scrollbar'>
       <div className='flex items-center gap-3'>
         <Sparkles className='w-5 h-5 text-color_5 animate-sparkle' />
         <h1 className='text-2xl font-semibold'>Community Creations</h1>

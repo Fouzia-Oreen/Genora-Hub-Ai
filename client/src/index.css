@@ -34,10 +34,10 @@ body {
   @apply text-color_3 hide-scrollbar
 }
 .panel {
-  @apply h-screen overflow-y-auto p-6 grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-8 xl:ml-12 mt-24 md:mt-12 items-center justify-center  lg:items-start 
+  @apply md:h-screen h-full overflow-y-auto p-6 grid grid-cols-1 xl:grid-cols-2 gap-4 lg:gap-8 xl:ml-12 mt-24 md:mt-12 items-center justify-center  lg:items-start 
 }
 .leftPanel {
-  @apply w-full max-w-xl p-6 rounded-lg border border-color_7/30 h-fit mx-auto
+  @apply w-full max-w-xl p-6 rounded-lg border border-color_7/30 md:h-fit h-[1200px] mx-auto
 }
 .rightPanel {
   @apply w-full max-w-xl p-5 rounded-lg flex flex-col border border-color_7/30 h-[700px] mx-auto
