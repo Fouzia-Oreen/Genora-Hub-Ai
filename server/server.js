@@ -24,13 +24,23 @@ const PORT = process.env.PORT || 5000;
 // Use helmet for security headers
 app.use(helmet());
 
-// Enable CORS for all routes
-app.use(cors({
-  origin: process.env.FRONTEND_URL, 
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true,
-}));
+
+const allowedOrigins = [
+  process.env.FRONTEND_URL, 
+  'https://genoraai.vercel.app'
+];
+const corsOptions = {
+  origin: (origin, callback) => {
+
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  }
+};
+// Use the configured CORS middleware
+app.use(cors(corsOptions));
 
 // Use compression to make responses faster
 app.use(compression());
