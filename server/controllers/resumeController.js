@@ -1,4 +1,3 @@
-import { GoogleGenerativeAI } from '@google/generative-ai';
 import cloudinary from 'cloudinary';
 import OpenAI from 'openai';
 import Resume from '../models/resumeSchema.js';
@@ -7,14 +6,12 @@ import User from '../models/userSchema.js';
 
 
 // Initialize OpenAI client for Gemini API
-const AI = new OpenAI({
-  apiKey: process.env.GEMINI_API_KEY,
-  baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
-});
+// const AI = new OpenAI({
+//   apiKey: process.env.GEMINI_API_KEY,
+//   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
+// });
 
-// Initialize the Google Generative AI client
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-//const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+
 
 // Configure Cloudinary once
 cloudinary.v2.config({
@@ -24,9 +21,9 @@ cloudinary.v2.config({
 });
 
 // --- HELPER FUNCTIONS ---
-const getClerkUserId = (req) => {
-    return req.user?.clerkUserId || null;
-};
+// const getClerkUserId = (req) => {
+//     return req.user?.clerkUserId || null;
+// };
 
 const getMongoUserId = (req) => {
     return req.user?._id || null;
