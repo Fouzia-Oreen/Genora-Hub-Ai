@@ -31,8 +31,7 @@
     "morgan": "^1.10.1",
     "multer": "^2.0.2",
     "openai": "^5.11.0",
-    "patch-package": "^8.0.0",
-    "pdf-parse": "^1.1.1"
+    "patch-package": "^8.0.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.10"

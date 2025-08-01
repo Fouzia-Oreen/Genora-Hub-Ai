@@ -1,16 +1,10 @@
-import { GoogleGenerativeAI } from '@google/generative-ai'; 
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import cloudinary from 'cloudinary';
+import OpenAI from 'openai';
 import Resume from '../models/resumeSchema.js';
 import User from '../models/userSchema.js';
-import OpenAI from 'openai'; 
-import fs from 'fs'; 
-import pdf from 'pdf-parse';
-import mammoth from 'mammoth'; 
 
-import axios from 'axios'; 
-import FormData from 'form-data';
 
-import Creation from '../models/creationSchema.js';
 
 // Initialize OpenAI client for Gemini API
 const AI = new OpenAI({
