@@ -1,7 +1,4 @@
 import { Briefcase, Eraser, FileSearch, FileText, FileUser, Hash, Image, Mail, Megaphone, MessageCircle, Scissors, SpellCheck, SquarePen, Tag, UserRound, UsersRound, Video } from 'lucide-react';
-import template_1 from '/template-2.webp'
-import template_2 from '/template-3.webp'
-import template_3 from '/template-5.webp'
 import arrow_icon from "./arrow_icon.svg";
 import gradientBackground from "./gradientBackground.png";
 
@@ -217,30 +214,6 @@ export const resumeReviewData = [
 ]
 
 
-
-export const mockFetchResumes = [
-  {
-    _id: 'resume1',
-    title: 'Software Engineer Resume',
-    thumbnailLink: template_1,
-    profileInfo: { fullName: 'Alice Johnson' },
-    updatedAt: '2023-01-15T10:00:00Z'
-  },
-  {
-    _id: 'resume2',
-    title: 'Product Manager CV',
-    thumbnailLink: template_2,
-    profileInfo: { fullName: 'Bob Williams' },
-    updatedAt: '2023-03-20T14:30:00Z'
-  },
-  {
-    _id: 'resume3',
-    title: 'Data Scientist Portfolio',
-    thumbnailLink: template_3,
-    profileInfo: { fullName: 'Charlie Brown' },
-    updatedAt: '2023-05-01T09:15:00Z'
-  },
-]
 
 export  const sampleResumeData = {
     userId : 1,
