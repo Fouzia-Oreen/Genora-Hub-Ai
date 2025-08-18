@@ -1,109 +1,141 @@
-import { Circle, LucideCirclePlus, Sparkles } from 'lucide-react';
-import React, { useState, useEffect } from 'react';
-import ResumeCards from '../../../components/resumeBuilt/ResumeCards';
-import { useNavigate } from 'react-router-dom';
+/* eslint-disable no-unused-vars */
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useAuth } from '@clerk/clerk-react';
+import axios from 'axios';
+import { ArrowLeft, LucideCirclePlus, Sparkles } from 'lucide-react';
 import moment from 'moment';
-import { mockFetchResumes } from '../../../assets/assets';
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { sampleResumeData } from '../../../assets/assets';
+import CreateResumeForm from '../../../components/resumeBuilt/resumeSections/CreateResumeForm';
+import ModalSmall from '../../../components/resumeBuilt/resumeSections/ModalSmall';
+import ResumeCard from '../../../components/resumeBuilt/resumeSections/ResumeCards';
+import toast from 'react-hot-toast';
 
-const AllResumeTemplates = () => {
-  const [resumes, setResumes] = useState([]);
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
+
+const BuiltYourResume = () => {
+  const [openCreateModal, setOpenCreateModal] = useState(false)
+  const [allResumes, setAllResumes] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
-  const navigate = useNavigate()
+  const { getToken } = useAuth();
+  const navigate = useNavigate();
 
-  // useEffect(() => {
-  //   const fetchUserResumes = async () => {
-  //     try {
-  //       setLoading(true);
-  //       setError(null);
-  //       // Replace this mock call with your actual API call:
-  //       // const response = await fetch('/api/users/resumes', {
-  //       //   headers: {
-  //       //     'Authorization': `Bearer YOUR_AUTH_TOKEN_HERE` // Include your authentication token
-  //       //   }
-  //       // });
-  //       // const data = await response.json();
+  const fetchAllResumes = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = await getToken();
+      const { data } = await axios.get('/api/resume', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      setAllResumes(data.resumes);
+    } catch (err) {
+      console.error("Error fetching resumes:", err);
+      setError("Failed to fetch resumes. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  //       const data = await mockFetchResumes(); // Using mock for demonstration
+  const handleDeleteResume = async(resumeId) => {
+    setLoading(true);
+    try {
+        const token = await getToken();
+        await axios.delete(`/api/resume/${resumeId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+        });
+        toast.success('Resume deleted successfully!');
+        navigate('/ai/resume-builder');
+    } catch (error) {
+        console.error('Error deleting resume:', error);
+        toast.error('Failed to delete resume. Please try again.');
+    } finally {
+        setLoading(false);
+    }
+  }
 
-  //       if (data.success) {
-  //         setResumes(data.resumes);
-  //       } else {
-  //         setError(data.message || 'Failed to fetch resumes.');
-  //       }
-  //     } catch (err) {
-  //       console.error('Error fetching resumes:', err);
-  //       setError('An error occurred while fetching resumes. Please try again.');
-  //     } finally {
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchUserResumes();
-  // }, []); 
-
-  // const handleAddNewResume = () => {
-  //   // In a real application, this would navigate to a resume creation page
-  //   alert('Navigating to Add New Resume page!');
-  //   console.log('Add New Resume clicked');
-  // };
+  useEffect(() => {
+    fetchAllResumes();
+  }, []);
 
 
+  const handleBack = () => {
+    setSelectedTemplate(null);
+  };
+
+  if (selectedTemplate) {
+    const TemplateComponent = selectedTemplate.component;
+    return (
+      <div className="bg-gray-100 p-8 min-h-screen">
+        <button
+          onClick={handleBack}
+          className="mb-6 px-4 flex gap-2 py-2 items-center btn-add"
+        >
+          <ArrowLeft size={16} /> Back to Templates
+        </button>
+        <TemplateComponent data={sampleResumeData} />
+      </div>
+    );
+  }
 
   return (
-    <div className="flex-1 h-screen flex flex-col gap-4 p-6 mt-20 lg:mx-12 md:mt-12 overflow-y-scroll hide-scrollbar">
-      <div className="flex flex-row justify-between items-center mb-8 gap-4">
+    <div className="flex-1 flex flex-col gap-4 p-6 mt-20 lg:mx-12 md:mt-12 overflow-y-scroll hide-scrollbar">
+      <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
         <div className='flex items-center gap-3'>
           <Sparkles className="w-5 h-5 text-color_5 animate-sparkle" />
-          <h1 className='text-2xl font-semibold'>Your Resumes</h1>
+          <h1 className='text-2xl font-semibold'>Built Your Resume</h1>
         </div>
         <button
-          onClick={() => navigate("/create-resume-form")}
-          className="btn2-grad flex gap-2 text-sm items-center"
+          onClick={() => setOpenCreateModal(true)}
+          className="btn2-grad flex gap-2 text-sm items-center w-fit"
         >
-          <LucideCirclePlus />
-          Add New Resume
+          <LucideCirclePlus size={15}/>
+          Create Your Resumes
         </button>
       </div>
 
-      {/* {loading && (
-        <div className="flex justify-center items-center h-64">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-blue-500"></div>
-          <p className="ml-4 text-lg text-gray-700">Loading resumes...</p>
-        </div>
-      )} */}
-
       {error && (
-        <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded-xl relative mb-6" role="alert">
-          <strong className="font-bold">Error:</strong>
+        <div className=" text-red-700 px-4 py-3 rounded-xl relative mb-6" role="alert">
           <span className="block sm:inline ml-2">{error}</span>
         </div>
       )}
 
-      {!loading && resumes.length === 0 && !error && (
-        <div className="text-center py-16 bg-white rounded-xl shadow-md">
-          <p className="text-xl text-gray-600 mb-4">You haven't created any resumes yet.</p>
-          <button
-            // onClick={handleAddNewResume}
-            className="bg-green-500 hover:bg-green-600 text-white font-semibold py-2 px-5 rounded-xl shadow-md transition duration-300 ease-in-out hover:scale-105"
-          >
-            Create Your First Resume
-          </button>
+      <div className="p-8 ">
+        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
+          {allResumes?.length > 0 ? (
+            allResumes.map((resume) => (
+              <ResumeCard
+                key={resume._id}
+                imgUrl={resume.thumbnailLink || null}
+                title={resume.title}
+                profileInfo={resume.profileInfo?.fullName || "Unnamed"}
+                lastUpdated={resume.updatedAt ? moment(resume.updatedAt).format("Do MMMM YYYY") : ""}
+                onSelect={() => navigate(`/ai/resume/${resume._id}`)} 
+                onDelete={() => handleDeleteResume(resume._id)}
+              />
+            ))
+          ) : (
+            <p className="text-center flex items-center justify-center">No resumes found. Create your first one!</p>
+          )}
         </div>
-      )}
+      </div>
 
-    <div className="w-full rounded-xl overflow-y-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
-      {mockFetchResumes.map((resume) => (
-        <>
-        <ResumeCards key={resume?._id} imgUrl={resume.thumbnailLink || null} title={resume.title}  profileInfo={resume.profileInfo.fullName} lastUpdated={resume?.updatedAt ? moment(resume.updatedAt).format("D MMM YYYY") : ""} onSelect={()=> navigate(`/resume/${resume._id}`)}/>
-        </>
-      ))}
-    </div>
-
+      <ModalSmall
+        isOpen={openCreateModal}
+        onClose={() => setOpenCreateModal(false)}
+        hideHeader
+      >
+        <div className='md:w-[450px]'>
+          <CreateResumeForm setOpenCreateModal={setOpenCreateModal} />
+        </div>
+      </ModalSmall>
     </div>
   );
-}
+};
 
-
-export default AllResumeTemplates
+export default BuiltYourResume
