@@ -63,9 +63,9 @@ connectDb();
 
 
 // Test route
-// app.get('/', (req, res) => {
-//   res.send('Genora-Hub-Ai Server is running!');
-// });
+app.get('/', (req, res) => {
+  res.send('Genora-Hub-Ai Server is running!');
+});
 
 // Clerk middleware applied globally for all routes
 app.use(clerkMiddleware()); 
