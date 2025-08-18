@@ -11,14 +11,25 @@ const resumeSchema = new mongoose.Schema({
   },
   thumbnailLink: {
     type: String,
-    colorPalette: [true],
+    link: String,
+    thumbnailPublicId: {
+      type: String,
+    },
+    colorPalette: [String],
   },
-  // thumbnailLink: { type: String,},
-  // colorPalette: { type: [String], default: [] },
+  templateId: { 
+    type: String,
+    required: false, 
+    default: null,
+  },
+  template : {
+    theme : String,
+    colorPalette : [String]
+  },
   profileInfo: {
     profilePreviewUrl: String,
     fullName: String,
-    description: String,
+    designation: String,
     summary: String,
   },
   contactInfo: {
@@ -41,8 +52,13 @@ const resumeSchema = new mongoose.Schema({
     institution: String,
     startDate: String,
     endDate: String,
+    description: String
   }],
   skills: [{
+    name: String,
+    progress: Number, 
+  }],
+  tools: [{
     name: String,
     progress: Number, 
   }],
@@ -52,20 +68,21 @@ const resumeSchema = new mongoose.Schema({
     github: String,
     liveDemo: String,
   }],
-  certification: [{
+  certifications: [{
     title: String,
     issuer: String,
     year: String,
   }],
-  language: [{
+  languages: [{
     name: String,
     progress: Number, 
   }],
-  reference: [{
+  references: [{
     name: String,
     designation: String,
     company: String,
     phone: String,
+    email: String,
   }],
   interests: [String] 
 }, {

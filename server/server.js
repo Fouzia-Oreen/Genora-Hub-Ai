@@ -8,9 +8,10 @@ import morgan from 'morgan';
 import { clerkMiddleware, requireAuth } from '@clerk/express';
 import aiRoutes from './routes/aiRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import resumeRoutes from './routes/resumeRoutes.js';
 import connectDb from './config/db.js';
 import connectCloudinary from './config/cloudinary.js';
-import resumeRoutes from './routes/resumeRoutes.js';
+
 
 // Load environment variables from .env file
 dotenv.config();
@@ -25,10 +26,15 @@ const PORT = process.env.PORT || 5000;
 app.use(helmet());
 
 
+// const allowedOrigins = [
+//   process.env.FRONTEND_URL, 
+// ];
+
 const allowedOrigins = [
   process.env.FRONTEND_URL, 
   'https://genoraai.vercel.app'
 ];
+
 const corsOptions = {
   origin: (origin, callback) => {
 
@@ -57,19 +63,19 @@ connectDb();
 
 
 // Test route
-app.get('/', (req, res) => {
-  res.send('Genora-Hub-Ai Server is running!');
-});
+// app.get('/', (req, res) => {
+//   res.send('Genora-Hub-Ai Server is running!');
+// });
 
 // Clerk middleware applied globally for all routes
 app.use(clerkMiddleware()); 
-app.use(requireAuth()); 
+
 
 // --- API ROUTES ---
-app.use('/api/ai', aiRoutes);
-app.use('/api/user', userRoutes);
-app.use('/api/resumes', resumeRoutes);
-
+// Apply requireAuth specifically to the API routes
+app.use('/api/ai', requireAuth(), aiRoutes);
+app.use('/api/user', requireAuth(), userRoutes);
+app.use('/api/resume', requireAuth(), resumeRoutes);
 
 
 // --- ERROR HANDLING ---

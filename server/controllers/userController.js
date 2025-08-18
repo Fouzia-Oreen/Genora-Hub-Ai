@@ -1,8 +1,8 @@
 import cloudinary from 'cloudinary';
 import fs from 'fs';
-
 import Creation from '../models/creationSchema.js';
 import User from '../models/userSchema.js';
+import Resume from '../models/resumeSchema.js';
 
 
 // Configure Cloudinary once
@@ -198,6 +198,100 @@ export const uploadProfileImage = async (req, res) => {
         });
     } catch (error) {
         console.error('Error uploading profile image:', error);
+        res.status(500).json({ success: false, message: error.message || 'An error occurred during image upload.' });
+    } finally {
+        if (req.file && req.file.path) {
+            fs.unlink(req.file.path, (err) => {
+                if (err) console.error('Error deleting temp file:', err);
+            });
+        }
+    }
+};
+
+
+export const uploadImage = async (req, res) => {
+    try {
+        const clerkUserId = getClerkUserId(req);
+        const { type } = req.params; 
+        const imageFile = req.file;
+
+        if (!clerkUserId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
+        }
+        if (!imageFile) {
+            return res.status(400).json({ success: false, message: 'No image file provided.' });
+        }
+
+        let model, query, updateFields, folder;
+        const publicId = `${type}_${clerkUserId}_${Date.now()}`;
+
+        switch (type) {
+            case 'profile':
+                model = User;
+                query = { clerkUserId: clerkUserId };
+                updateFields = (url, publicId) => ({
+                    profileImageUrl: url,
+                    profileImagePublicId: publicId
+                });
+                folder = 'Genora/profile_images';
+                break;
+            case 'resume':
+                // Assuming you're passing the resume ID in the request body or as a parameter
+                const { resumeId } = req.body; 
+                if (!resumeId) {
+                    return res.status(400).json({ success: false, message: 'Resume ID is required for resume image upload.' });
+                }
+                model = Resume;
+                query = { _id: resumeId, userId: clerkUserId };
+                updateFields = (url, publicId) => ({
+                    thumbnailLink: url,
+                    thumbnailPublicId: publicId 
+                });
+                folder = 'Genora/resume_thumbnails';
+                break;
+            default:
+                return res.status(400).json({ success: false, message: 'Invalid image type provided.' });
+        }
+
+        // Find the document to be updated
+        const document = await model.findOne(query);
+        if (!document) {
+            return res.status(404).json({ success: false, message: `${type} document not found.` });
+        }
+
+        const oldPublicId = type === 'profile' ? document.profileImagePublicId : document.thumbnailPublicId;
+        if (oldPublicId) {
+            try {
+                await cloudinary.v2.uploader.destroy(oldPublicId);
+                console.log(`Old ${type} image ${oldPublicId} deleted from Cloudinary.`);
+            } catch (deleteError) {
+                console.warn(`Failed to delete old ${type} image ${oldPublicId}:`, deleteError.message);
+            }
+        }
+
+        // Upload new image to Cloudinary
+        const uploadResult = await cloudinary.v2.uploader.upload(imageFile.path, {
+            folder: folder,
+            public_id: publicId,
+            quality: 'auto',
+            fetch_format: 'auto',
+        });
+
+        // Update the document with new image URL and public ID
+        const updatedDocument = await model.findOneAndUpdate(
+            query,
+            { $set: updateFields(uploadResult.secure_url, uploadResult.public_id) },
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: `${type} image updated successfully.`,
+            imageUrl: updatedDocument.profileImageUrl || updatedDocument.thumbnailLink, 
+        });
+
+    } catch (error) {
+        console.error(`Error uploading ${req.params.type} image:`, error);
         res.status(500).json({ success: false, message: error.message || 'An error occurred during image upload.' });
     } finally {
         if (req.file && req.file.path) {

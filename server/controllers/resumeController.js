@@ -1,16 +1,8 @@
 import cloudinary from 'cloudinary';
-import OpenAI from 'openai';
 import Resume from '../models/resumeSchema.js';
 import User from '../models/userSchema.js';
-
-
-
-// Initialize OpenAI client for Gemini API
-// const AI = new OpenAI({
-//   apiKey: process.env.GEMINI_API_KEY,
-//   baseURL: "https://generativelanguage.googleapis.com/v1beta/openai/"
-// });
-
+import Creation from '../models/creationSchema.js';
+import fs from "fs";
 
 
 // Configure Cloudinary once
@@ -20,96 +12,51 @@ cloudinary.v2.config({
     api_secret: process.env.CLOUDINARY_SECRET_KEY, 
 });
 
-// --- HELPER FUNCTIONS ---
-// const getClerkUserId = (req) => {
-//     return req.user?.clerkUserId || null;
-// };
-
-const getMongoUserId = (req) => {
-    return req.user?._id || null;
+// Helper function to get MongoDB user ID
+const getMongoUserId = (req) => req.user?._id || null;
+const getClerkUserId = (req) => {
+    return req.user?.clerkUserId || null;
 };
-
-// Reusable function to check and handle usage limits
-const checkUsageLimit = (user, feature, limit) => {
-
-  if (user.plan === 'launch' && user.freeUsage >= limit) {
-      return { success: false, status: 403, message: 'Free usage limit exceeded. Upgrade to creator for more requests.' };
-  }
-  // Add other plan-specific checks here
-  if (feature === 'youtubeScript' && user.plan === 'creator' && user.youtubeScriptDailyCount >= 10) {
-      return { success: false, status: 403, message: 'Daily usage limit exceeded for YouTube Script Generation. Try again tomorrow.' };
-  }
-  if (feature === 'imageGeneration' && user.plan === 'creator' && user.imageGenerationDailyCount >= 10) {
-        return { success: false, status: 403, message: 'Daily usage limit exceeded for Image Generation. Try again tomorrow.' };
-  }
-  if (feature === 'builtResume' && user.plan === 'studio' && user.builtResumeDailyCount >= 10) {
-      return { success: false, status: 403, message: 'Daily usage limit exceeded for Built Your Resume (10 per day). Try again tomorrow.' };
-  }
-  if (feature === 'reviewResume' && (user.plan === 'creator' || user.plan === 'studio') && user.reviewResumeDailyCount >= 3) {
-      return { success: false, status: 403, message: 'Daily usage limit exceeded for Resume Review (3 per day). Try again tomorrow.' };
-  }
-  if (feature === 'emailResponse' && user.plan === 'creator' && user.emailResponseDailyCount >= 10) {
-        return { success: false, status: 403, message: 'Daily usage limit exceeded for Email Generation. Try again tomorrow.' };
-  }
-  if (feature === 'coverLetter' && user.plan === 'creator' && user.coverLetterDailyCount >= 5) {
-        return { success: false, status: 403, message: 'Daily usage limit exceeded for Cover Letter Generation. Try again tomorrow.' };
-  }
-
-  return { success: true };
-};
-
-// Helper function to update usage count
-const updateUsageCount = async (user, feature) => {
-    let updateField;
-    if (user.plan === 'launch') {
-        updateField = 'freeUsage';
-    } else if (feature === 'youtubeScript' && user.plan === 'creator') {
-        updateField = 'youtubeScriptDailyCount';
-    } else if (feature === 'imageGeneration' && user.plan === 'creator') {
-        updateField = 'imageGenerationDailyCount';
-    } else if (feature === 'builtResume' && user.plan === 'studio') {
-        updateField = 'builtResumeDailyCount';
-    } else if (feature === 'reviewResume' && (user.plan === 'creator' || user.plan === 'studio')) {
-        updateField = 'reviewResumeDailyCount';
-    } else if (feature === 'emailResponse' && user.plan === 'creator') {
-        updateField = 'emailResponseDailyCount';
-    } else if (feature === 'coverLetter' && user.plan === 'creator') {
-        updateField = 'coverLetterDailyCount';
-    } else {
-        // No usage limit for this plan/feature combination
-        return;
-    }
-
-    await User.updateOne(
-        { clerkUserId: user.clerkUserId },
-        { $inc: { [updateField]: 1 } }
-    );
-};
-
-
 /* --- NEW RESUME MANAGEMENT CONTROLLERS --- */
 export const createResume = async (req, res) => {
     try {
-        const mongoUserId = getMongoUserId(req);
-        const { plan, builtResumeDailyCount } = req.user;
-        const resumeData = req.body;
+       // const mongoUserId = getMongoUserId(req);
+        const clerkUserId = getClerkUserId(req);
+        const { plan } = req.user;
+        const { title } = req.body;
+        const defaultResumeUserData = {
+            profileInfo: { profileImg: null, profilePreviewUrl: "", fullName: "", designation: "", summary: "" },
+            contactInfo: { email: "", phone: "", location: "", linkedIn: "", github: "", website: "" },
+            workExperience: [{ company: "", role: "", startDate: "", endDate: "", description: "" }],
+            education: [{ degree: "", institution: "", startDate: "", endDate: "", description: "" }],
+            skills: [{ name: "", progress: 0, }],
+            projects: [{ title: "", description: "", github: "", liveDemo: "", }],
+            certifications: [{ title: "", issuer: "", year: "", }],
+            languages: [{ name: "", progress: 0, }],
+            references: [{ name: "", designation: "", company: "", phone: "", email: "" }],
+            interests: [""]
+        };
+    if (!clerkUserId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
+    }
 
-        if (!mongoUserId) {
-            return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
-        }
-        if (plan !== 'studio') {
-            return res.status(403).json({ success: false, message: 'This feature is not available for your current plan. Upgrade to Studio.' });
-        }
+    if (plan === 'launch') {
+      return res.status(403).json({ success: false, message: 'Your current plan does not allow creating resumes. Upgrade to Creative or Studio.' });
+    }
 
-        const usageCheck = checkUsageLimit(req.user, 'builtResume', 10);
-        if (!usageCheck.success) {
-            return res.status(usageCheck.status).json({ success: false, message: usageCheck.message });
-        }
+    if (plan === 'creative') {
+      const resumeCount = await Resume.countDocuments({ userId: req.user._id }); 
+      const creativePlanLimit = 3;
 
-        const newResume = await Resume.create({ userId: mongoUserId, ...resumeData });
-        await updateUsageCount(req.user, 'builtResume');
+      if (resumeCount >= creativePlanLimit) {
+        return res.status(403).json({ success: false, message: 'You have reached the limit of 3 resumes for the Creative plan. Please upgrade to Studio to create more.' });
+      }
+    }
+
+        const newResume = await Resume.create({ userId: req.user._id, title, ...defaultResumeUserData });
 
         res.status(201).json({ success: true, message: 'Resume created successfully!', resume: newResume });
+
     } catch (error) {
         console.error('Error creating resume:', error);
         if (error.name === 'ValidationError') {
@@ -119,21 +66,47 @@ export const createResume = async (req, res) => {
     }
 };
 
+// export const getUsersResume = async (req, res) => {
+//     try {
+//         const mongoUserId = getMongoUserId(req);
+//         if (!mongoUserId) {
+//             return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
+//         }
+
+//         const userResumes = await Resume.find({ userId: mongoUserId }).lean();
+
+//         if (!userResumes || userResumes.length === 0) {
+//             return res.status(200).json({ success: true, message: 'No resumes found for this user.', resumes: [] });
+//         }
+
+//     } catch (error) {
+//         console.error('Error fetching user resumes:', error);
+//         res.status(500).json({ success: false, message: 'Error fetching user resumes', error: error.message });
+//     }
+// };
 export const getUsersResume = async (req, res) => {
-    try {
-        const mongoUserId = getMongoUserId(req);
-        if (!mongoUserId) {
-            return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
-        }
-
-        const resumes = await Resume.find({ userId: mongoUserId }).sort({ createdAt: -1 });
-        res.status(200).json({ success: true, resumes: resumes || [] });
-    } catch (error) {
-        console.error('Error fetching user resumes:', error);
-        res.status(500).json({ success: false, message: 'Error fetching user resumes', error: error.message });
+  try {
+    const mongoUserId = req.user?._id; (req)
+    if (!mongoUserId) {
+      return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
     }
-};
 
+    const userResumes = await Resume.find({ userId: mongoUserId }).lean();
+
+    return res.status(200).json({
+      success: true,
+      message: userResumes.length ? 'Resumes fetched successfully.' : 'No resumes found for this user.',
+      resumes: userResumes,
+    });
+  } catch (error) {
+    console.error('Error fetching user resumes:', error);
+    res.status(500).json({
+      success: false,
+      message: 'Error fetching user resumes',
+      error: error.message,
+    });
+  }
+};
 export const getResumesById = async (req, res) => {
     try {
         const mongoUserId = getMongoUserId(req);
@@ -146,7 +119,7 @@ export const getResumesById = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Resume ID is required.' });
         }
 
-        const resume = await Resume.findOne({ _id: resumeId, userId: mongoUserId });
+        const resume = await Resume.findOne({ _id: resumeId, userId: mongoUserId }).lean();
         if (!resume) {
             return res.status(404).json({ success: false, message: 'Resume not found or you do not have permission to access it.' });
         }
@@ -197,23 +170,151 @@ export const updateUserResume = async (req, res) => {
 export const deleteUserResume = async (req, res) => {
     try {
         const mongoUserId = getMongoUserId(req);
-        const { id: resumeId } = req.params;
+        const { id: resumeId } = req.params; 
 
         if (!mongoUserId) {
             return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
         }
-        if (!resumeId) {
-            return res.status(400).json({ success: false, message: 'Resume ID is required.' });
-        }
 
         const deletedResume = await Resume.findOneAndDelete({ _id: resumeId, userId: mongoUserId });
+
         if (!deletedResume) {
             return res.status(404).json({ success: false, message: 'Resume not found or you do not have permission to delete it.' });
+        }
+
+        await Creation.findOneAndDelete({ creationId: resumeId, userId: mongoUserId, type: 'resume' });
+
+        if (deletedResume.thumbnailPublicId) {
+            try {
+                await cloudinary.v2.uploader.destroy(deletedResume.thumbnailPublicId);
+                console.log(`Cloudinary thumbnail ${deletedResume.thumbnailPublicId} deleted successfully.`);
+            } catch (cloudinaryError) {
+                console.warn(`Failed to delete Cloudinary thumbnail ${deletedResume.thumbnailPublicId}:`, cloudinaryError.message);
+            }
         }
 
         res.status(200).json({ success: true, message: 'Resume deleted successfully!' });
     } catch (error) {
         console.error('Error deleting resume:', error);
         res.status(500).json({ success: false, message: 'Error deleting resume', error: error.message });
+    }
+};
+
+export const uploadThumbnail = async (req, res) => {
+    const mongoUserId = getMongoUserId(req);
+    const clerkUserId = req.user.clerkUserId;
+    const { id: resumeId } = req.params;
+    const imageFile = req.file;
+
+    try {
+        
+        if (!mongoUserId || !clerkUserId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
+        }
+        if (!imageFile) {
+            return res.status(400).json({ success: false, message: 'No thumbnail file provided.' });
+        }
+        if (!resumeId) {
+            return res.status(400).json({ success: false, message: 'Resume ID is required.' });
+        }
+
+        const publicId = `resume_thumbnail_${clerkUserId}_${Date.now()}`;
+        const folder = 'Genora/resume_thumbnails';
+        const query = { _id: resumeId, userId: mongoUserId };
+
+        const document = await Resume.findOne(query);
+        if (!document) {
+            return res.status(404).json({ success: false, message: 'Resume not found or you do not have permission to access it.' });
+        }
+
+        if (document.thumbnailPublicId) {
+            await cloudinary.v2.uploader.destroy(document.thumbnailPublicId);
+        }
+
+        const uploadResult = await cloudinary.v2.uploader.upload(imageFile.path, {
+            folder: folder,
+            public_id: publicId,
+            quality: 'auto',
+            fetch_format: 'auto',
+        });
+
+        const updatedDocument = await Resume.findOneAndUpdate(
+            query,
+            { $set: { thumbnailLink: uploadResult.secure_url, thumbnailPublicId: uploadResult.public_id } },
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: 'Thumbnail updated successfully.',
+            imageUrl: updatedDocument.thumbnailLink,
+        });
+
+    } catch (error) {
+        console.error('Error uploading thumbnail:', error);
+        res.status(500).json({ success: false, message: error.message || 'An error occurred during thumbnail upload.' });
+    } finally {
+        if (imageFile && imageFile.path) {
+            fs.unlink(imageFile.path, (err) => {
+                if (err) console.error('Error deleting temp thumbnail file:', err);
+            });
+        }
+    }
+};
+
+export const uploadProfileImage = async (req, res) => {
+    const mongoUserId = getMongoUserId(req);
+    const clerkUserId = req.user.clerkUserId;
+    const imageFile = req.file;
+
+    try {
+        if (!mongoUserId || !clerkUserId) {
+            return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
+        }
+        if (!imageFile) {
+            return res.status(400).json({ success: false, message: 'No profile image file provided.' });
+        }
+
+        const publicId = `profile_image_${clerkUserId}_${Date.now()}`;
+        const folder = 'Genora/profile_images';
+        const query = { clerkUserId: clerkUserId };
+
+        const document = await User.findOne(query);
+        if (!document) {
+            return res.status(404).json({ success: false, message: 'User not found.' });
+        }
+
+        if (document.profileImagePublicId) {
+            await cloudinary.v2.uploader.destroy(document.profileImagePublicId);
+        }
+
+        const uploadResult = await cloudinary.v2.uploader.upload(imageFile.path, {
+            folder: folder,
+            public_id: publicId,
+            quality: 'auto',
+            fetch_format: 'auto',
+        });
+
+        const updatedDocument = await User.findOneAndUpdate(
+            query,
+            { $set: { profileImageUrl: uploadResult.secure_url, profileImagePublicId: uploadResult.public_id } },
+            { new: true, runValidators: true }
+        );
+
+        res.status(200).json({
+            success: true,
+            message: 'Profile image updated successfully.',
+            imageUrl: updatedDocument.profileImageUrl,
+        });
+
+    } catch (error) {
+        console.error('Error uploading profile image:', error);
+        res.status(500).json({ success: false, message: error.message || 'An error occurred during profile image upload.' });
+    } finally {
+        if (imageFile && imageFile.path) {
+            fs.unlink(imageFile.path, (err) => {
+                if (err) console.error('Error deleting temp profile image file:', err);
+            });
+        }
     }
 };

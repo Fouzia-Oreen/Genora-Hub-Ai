@@ -22,11 +22,5 @@ userRouter.get('/creations/published', auth, getPublishedCreations);
 userRouter.post('/creations/toggle-like', auth, toggleLikedCreations);
 userRouter.delete('/creations/:id', auth, deleteCreation);
 
-// --- NEW RESUME ROUTES ---
-// userRouter.post('/resumes', auth, createResume); 
-// userRouter.get('/resumes', auth, getUsersResume); 
-// userRouter.get('/resumes/:id', auth, getResumesById); 
-// userRouter.put('/resumes/:id', auth, updateUserResume); 
-// userRouter.delete('/resumes/:id', auth, deleteUserResume); 
 
 export default userRouter;
