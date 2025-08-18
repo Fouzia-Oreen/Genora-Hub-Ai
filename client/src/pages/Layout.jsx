@@ -63,11 +63,11 @@ const Layout = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-color_9">
       
     {/* Navbar */}
     <div
-    className="fixed top-4 left-1/2 -translate-x-1/2 z-[9999] md:w-[80%]  w-[95%] rounded-full  shadow-sm backdrop-blur-2xl bg-cover bg-no-repeat bg-center border border-color_8/40" style={{ backgroundImage: `url(${bg})`}}>
+    className="fixed top-4 left-1/2 -translate-x-1/2 z-[99] md:w-[80%] w-[95%] rounded-full  shadow-sm backdrop-blur-2xl bg-cover bg-no-repeat bg-center border border-color_8/40" style={{ backgroundImage: `url(${bg})`}}>
     <div
       className=" w-full  flex justify-between items-center py-3 px-6 bg-center"
     >

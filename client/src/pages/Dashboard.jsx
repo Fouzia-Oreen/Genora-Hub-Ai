@@ -1,15 +1,59 @@
-import { Protect, useAuth, useUser } from '@clerk/clerk-react'
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useAuth, useUser } from '@clerk/clerk-react'
 import axios from 'axios'
-import { Gem, Sparkles } from 'lucide-react'
-import { useEffect, useState } from 'react'
+import { Gem, LucideBriefcase, Sparkles } from 'lucide-react'
+import { useCallback, useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import CreationItems from '../components/home/CreationItems'
 
 const Dashboard = () => {
-  const [creations, setCreations] = useState([])
+  const [creations, setCreations] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const {getToken} =useAuth()
+  const { getToken, isLoaded: isAuthLoaded } = useAuth();
+  const { user: clerkUser, isLoaded: isClerkUserLoaded } = useUser(); 
+  const [userProfile, setUserProfile] = useState(null);
+  const [allResumes, setAllResumes] = useState(null);
+
+
+  const fetchUserProfile = useCallback(async () => {
+    if (!isAuthLoaded || !isClerkUserLoaded || !clerkUser) {
+      return;
+    }
+    setLoading(true);
+    try {
+      const token = await getToken();
+      const { data } = await axios.get('/api/user/profile', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (data.success && data.user) {
+        setUserProfile(data.user);
+      } else {
+        toast.error(data.message || 'Failed to fetch user profile.');
+      }
+    } catch (error) {
+      console.error('Error fetching user profile:', error);
+      toast.error(error.response?.data?.message || 'An error occurred while fetching user profile.');
+    } finally {
+      setLoading(false);
+    }
+  }, [isAuthLoaded, isClerkUserLoaded, clerkUser, getToken]);
+
+  useEffect(() => {
+    fetchUserProfile();
+  }, [fetchUserProfile]);
+
+
+  const badgeStyle = {
+    studio: 'bg-indigo-500 text-color_9',
+    creator: 'bg-green-500 text-color_9', 
+    launch: 'bg-color_8/60 text-color_2', 
+  };
+
+  const displayPlan = userProfile?.plan.charAt(0).toUpperCase() + userProfile?.plan.slice(1);
+
 
   const handleCopyContent = (content) => {
     if (!content) {
@@ -112,22 +156,31 @@ const Dashboard = () => {
         setLoading(false);
       }
   }
+  const fetchAllResumes = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const token = await getToken();
+      const { data } = await axios.get('/api/resume', {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      
+      setAllResumes(data.resumes);
+    } catch (err) {
+      console.error("Error fetching resumes:", err);
+      setError("Failed to fetch resumes. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
 
   useEffect(() => {
     getDashboardData()
+    fetchAllResumes();
   }, [])
 
-  const { user } = useUser();
-  const plan = user?.plan?.toLowerCase() || 'launch';
 
-  const badgeStyle = {
-    studio: 'bg-indigo-500 text-color_2',
-    creator: 'bg-green-500 text-color_2', 
-    launch: 'bg-color_8/60 text-color_2', 
-  };
-
-  const displayPlan = plan.charAt(0).toUpperCase() + plan.slice(1);
-  
   return (
     <div className=' p-6 mt-24 md:mt-12 xl:pl-14'>
       <div className='flex justify-start gap-4 flex-wrap '>
@@ -141,15 +194,22 @@ const Dashboard = () => {
             <Sparkles className='w-5 text-color_9' />
           </div>
         </div>
+        <div className="flex justify-between items-center md:w-72 w-full p-4 px-6 bg-color_9 rounded-xl border border-color_6/30">
+          <div className='text-color_4'>
+            <p className='text-sm'>No. Of Resumes</p>
+            <h2 className='text-xl font-semibold'>{allResumes?.length}</h2>
+          </div>
+          <div className='w-10 h-10 rounded-lg bg-gradient-to-bl from-green-600 to-orange-300 flex items-center justify-center'>
+            <LucideBriefcase className='w-5 text-color_9' />
+          </div>
+        </div>
         {/* Total Active Plan Cards */}
         <div className="flex justify-between items-center md:w-72 w-full p-4 px-6 bg-color_9 rounded-xl border border-color_6/30">
           <div className='text-color_4'>
             <p className='text-sm'>Active Plan</p>
-            <Protect plan=''>
-            <p className={`mt-1 text-xs font-semibold rounded px-2 py-[2px] w-fit mx-auto ${badgeStyle[plan]}`}>
-              {displayPlan} Plan
-            </p>
-            </Protect>
+              <p className={`mt-1 text-xs font-semibold rounded px-2 py-[2px] w-fit ${badgeStyle[userProfile?.plan]}`}>
+                {displayPlan} Plan
+              </p>
           </div>
           <div className='w-10 h-10 rounded-lg bg-gradient-to-tr from-[#ffc165] to-[#9e53ee] flex items-center justify-center'>
             <Gem className='w-5 text-color_9' />
@@ -167,8 +227,7 @@ const Dashboard = () => {
             <p>Please try refreshing the page.</p>
           </div>
         ) : creations.length === 0 ? (
-          <div className='text-center p-4 text-color_4/60'>
-            <History className='w-12 h-12 mx-auto mb-4' />
+          <div className='text-center p-4 text-color_2/60 mt-20'>
             <p className='text-lg font-medium'>No creations found yet!</p>
             <p className='text-sm'>Start generating content using our AI tools to see your history here.</p>
           </div>

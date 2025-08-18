@@ -1,4 +1,3 @@
-// components/CopyDownloadButtons.jsx
 import { Copy, Download } from 'lucide-react'
 
 export default function CopyDownloadButtons({ onCopy, onDownload }) {

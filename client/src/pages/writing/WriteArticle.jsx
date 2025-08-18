@@ -80,7 +80,7 @@ const WriteArticle = () => {
         <Sparkles className="w-5 h-5 text-color_5 animate-sparkle" />
         <h1 className='text-2xl font-semibold'>Article Configuration</h1>
         </div>
-        <p className='mt-6  font-medium text-color_4'>Article Topic</p>
+        <p className='mt-6 font-medium text-color_4'>Article Topic</p>
         <input onChange={(e) => setInput(e.target.value)} value={input} type="text" placeholder='The future of artificial intelligence is ...' className='w-full p-2 mt-2 outline-none text-sm rounded-md border border-color_7/40 ' required/>
         <p className='mt-6 font-medium text-color_4'>Article Length</p>
         <div className='mt-3 flex gap-3 flex-wrap sm:max-w-9/11'>

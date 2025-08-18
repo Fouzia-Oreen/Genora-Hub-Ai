@@ -63,7 +63,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
   return (
     <div
       className={`
-        w-72 bg-color_9 border-r border-color_6/30 flex flex-col justify-between items-center fixed top-[64px] bottom-0 z-[9998] transition-transform duration-300 ease-in-out overflow-y-scroll hide-scrollbar 
+        w-72 bg-color_9 border-r border-color_6/30 flex flex-col justify-between items-center fixed top-[64px] bottom-0 z-[90] transition-transform duration-300 ease-in-out overflow-y-scroll hide-scrollbar shadow-md
         ${sidebar ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:flex
       `}
@@ -129,7 +129,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
           </div>
         )}
         <LogOut onClick={signOut} className='w-5 text-color_10 hover:text-rose-500 cursor-pointer'/>
-      </div>
+    </div>
     </div>
   );
 };

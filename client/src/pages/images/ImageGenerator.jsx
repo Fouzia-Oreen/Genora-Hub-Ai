@@ -11,7 +11,7 @@ const ImageGenerator = () => {
   const imageStyle = ['Realistic', 'Ghibli Style', 'Anime Style', 'Cartoon Style', 'Fantasy Style', '3D Style', 'Portrait Style'];
   const [selectedImageStyle, setSelectedImageStyle] = useState('Realistic');
   const [input, setInput] = useState('');
-  const [publish, setPublish] = useState(false); // State for the toggle button
+  const [publish, setPublish] = useState(false); 
   const [generatedImageUrl, setGeneratedImageUrl] = useState(null);
   const [loading, setLoading] = useState(false);
 

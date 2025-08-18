@@ -1,9 +1,11 @@
+import axios from 'axios';
 import { Copy, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import Markdown from 'react-markdown';
 
+axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 const CreationItems = ({item, handleDeleteCreation, handleCopyContent }) => {
-const  [expanded, setExpanded] = useState(false)
+  const [expanded, setExpanded] = useState(false);
 
   return (
     <div className='p-4  text-sm bg-color_9 border border-color_6/30 rounded-lg cursor-pointer' onClick={() => setExpanded(!expanded)}>

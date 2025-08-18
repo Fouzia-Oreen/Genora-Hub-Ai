@@ -1,9 +1,9 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import axios from 'axios';
-import toast from 'react-hot-toast';
 import { useAuth, useUser } from '@clerk/clerk-react';
-import { UserCircle, Mail, DollarSign, Sparkles, Image, GalleryHorizontal } from 'lucide-react';
-import { Link } from 'react-router-dom'; // Assuming you are using React Router for navigation
+import axios from 'axios';
+import { DollarSign, GalleryHorizontal, Image, Mail, Sparkles, UserCircle } from 'lucide-react';
+import { useCallback, useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
+import { Link } from 'react-router-dom';
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
