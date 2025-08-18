@@ -6,7 +6,8 @@ import Home from "../../client/src/pages/Home"
 import Layout from "../../client/src/pages/Layout"
 import CoverLetterGenerator from "./pages/career/CoverLetterGenerator"
 import RespondToEmail from "./pages/career/RespondToEmail"
-import AllResumeTemplates from "./pages/career/resume/BuiltYourResume"
+import BuiltYourResume from "./pages/career/resume/BuiltYourResume"
+import EditResume from "./pages/career/resume/EditResume"
 import ReviewResume from "./pages/career/ReviewResume"
 import RemoveBackground from "./pages/images/BackgroundRemover"
 import ImageGenerator from "./pages/images/ImageGenerator"
@@ -56,7 +57,9 @@ const App = () => {
           <Route path="review-resume" element={<ReviewResume />} />
           <Route path="cover-letter-generator" element={<CoverLetterGenerator />} />
           {/* resume */}
-          <Route path="resume-builder" element={<AllResumeTemplates />} />
+          <Route path="resume-builder" element={<BuiltYourResume />} />
+          <Route path="resume/:resumeId" element={<EditResume />} />
+
         </Route>
       </Routes>
       <Toaster

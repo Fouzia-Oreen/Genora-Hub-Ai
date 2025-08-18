@@ -19,6 +19,49 @@
   --color_9: #F3F5F8;
   --color_10: #EA580C;
   --color_11: #F97316;
+
+   --tem_1 : #c5c5c5;
+   --tem_2 : #918c89;
+   --tem_3 : #55524f;
+   --tem_4 : #3a3635;
+   --tem_5 : #0a0a0a;
+
+   --tem_1 : #ffccd3;
+   --tem_2 : #faabb5;
+   --tem_3 : #ff7b91;
+   --tem_4 : #fd4f7b;
+   --tem_5 : #110005;
+
+   --tem_1 : #c2b2fa;
+   --tem_2 : #bba1fd;
+   --tem_3 : #b28df8;
+   --tem_4 : #935cd1;
+   --tem_5 : #09001a;
+
+   --tem_1 : #ffedd4;
+   --tem_2 : #ffd6a7;
+   --tem_3 : #fcab50;
+   --tem_4 : #fd7941;
+   --tem_5 : #140400;
+
+   --tem_1 : #dcfce7;
+   --tem_2 : #a4f4cf;
+   --tem_3 : #43ac8b;
+   --tem_4 : #04684a;
+   --tem_5 : #001611;
+
+   --tem_1 : #bedbff;
+   --tem_2 : #8ec5ff;
+   --tem_3 : #2b7fff;
+   --tem_4 : #155dfc;
+   --tem_5 : #00061d;
+
+   --tem_1 : #bae6fd;
+   --tem_2 : #7dd3fc;
+   --tem_3 : #06b6d4;
+   --tem_4 : #0e7490;
+   --tem_5 : #00161f;
+
 }
 
 /* scrollbar */
@@ -142,9 +185,6 @@ font-size: 1.5rem !important;
 
 
 /* buttons */
-/* .btn2-grad {
-  background-image: linear-gradient(to right, #2563EB 0%, #60A5FA 51%, #1D4ED8 100%)
-} */
 .btn2-grad {
   background-image: linear-gradient(to right, #2563EB 0%, #60A5FA 51%, #1D4ED8 100%);
   padding: 7px 20px;
@@ -169,5 +209,19 @@ font-size: 1.5rem !important;
 }
 .form-input {
   @apply w-full bg-transparent outline-none text-color_3 placeholder:text-color_2/40 text-sm border border-color_4/20 rounded px-3 py-2;
+}
+
+/* edit resume */
+.btn-small-light {
+  @apply flex items-center gap-2 font-medium text-color_4
+}
+.btn-small {
+  @apply size-7 p-1.5 bg-gradient-to-tl from-color_5 via-color_6 to-color_7 text-color_9 rounded text-lg
+}
+.btn-delete {
+  @apply size-7 p-1.5 bg-[#e0b9b9] text-red-600 rounded text-lg
+}
+.btn-add {
+  @apply flex items-center justify-center gap-2 my-4 bg-gradient-to-tl from-color_5 via-color_6 to-color_7 text-color_9 px-2 py-1.5 rounded text-sm w-fit
 }
 
