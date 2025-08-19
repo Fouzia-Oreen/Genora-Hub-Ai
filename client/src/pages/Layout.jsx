@@ -63,7 +63,7 @@ const Layout = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-color_9">
+    <div className="flex flex-col h-screen bg-color_9">
       
     {/* Navbar */}
     <div
@@ -86,15 +86,38 @@ const Layout = () => {
         </div>
 
         {/* User Info for large screens */}
-          <div className='hidden lg:flex items-center gap-3 cursor-pointer' onClick={openUserProfile}>
-          {displayProfileImage ? (
-            <img src={displayProfileImage} alt="avatar" className="w-9 h-9 rounded-full object-cover border border-color_5/60" />
+        <div
+          className="hidden lg:flex items-center gap-3 cursor-pointer"
+          onClick={openUserProfile}
+        >
+          {loadingProfile ? (
+            <div className="w-9 h-9 rounded-full bg-color_8/40 animate-pulse" />
+          ) : displayProfileImage ? (
+            <img
+              src={displayProfileImage}
+              alt="avatar"
+              className="w-9 h-9 rounded-full object-cover border border-color_5/60"
+            />
           ) : (
             <UserCircle className="w-8 h-8 text-color_4/60" />
           )}
+
           <div>
-            <h1 className="text-sm font-semibold text-color_5">{clerkUser?.fullName || clerkUser?.username || 'User'}</h1>
-            <p className="text-xs text-color_4">{user.primaryEmailAddress?.emailAddress}</p>
+            {loadingProfile ? (
+              <>
+                <div className="w-24 h-3 bg-color_8/40 rounded animate-pulse mb-1" />
+                <div className="w-32 h-2 bg-color_8/30 rounded animate-pulse" />
+              </>
+            ) : (
+              <>
+                <h1 className="text-sm font-semibold text-color_5">
+                  {clerkUser?.fullName || clerkUser?.username || 'User'}
+                </h1>
+                <p className="text-xs text-color_4">
+                  {user.primaryEmailAddress?.emailAddress}
+                </p>
+              </>
+            )}
           </div>
         </div>
         </div>

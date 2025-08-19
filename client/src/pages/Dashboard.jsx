@@ -190,7 +190,7 @@ const Dashboard = () => {
             <p className='text-sm'>Total Creations</p>
             <h2 className='text-xl font-semibold'>{creations.length}</h2>
           </div>
-          <div className='w-10 h-10 rounded-lg bg-gradient-to-bl from-[#6EE7B7] to-[#337ef8] flex items-center justify-center'>
+          <div className='w-10 h-10 rounded bg-gradient-to-bl from-[#6EE7B7] to-[#337ef8] flex items-center justify-center'>
             <Sparkles className='w-5 text-color_9' />
           </div>
         </div>
@@ -199,7 +199,7 @@ const Dashboard = () => {
             <p className='text-sm'>No. Of Resumes</p>
             <h2 className='text-xl font-semibold'>{allResumes?.length}</h2>
           </div>
-          <div className='w-10 h-10 rounded-lg bg-gradient-to-bl from-green-600 to-orange-300 flex items-center justify-center'>
+          <div className='w-10 h-10 rounded bg-gradient-to-bl from-green-600 to-orange-300 flex items-center justify-center'>
             <LucideBriefcase className='w-5 text-color_9' />
           </div>
         </div>
@@ -207,18 +207,17 @@ const Dashboard = () => {
         <div className="flex justify-between items-center md:w-72 w-full p-4 px-6 bg-color_9 rounded-xl border border-color_6/30">
           <div className='text-color_4'>
             <p className='text-sm'>Active Plan</p>
-              <p className={`mt-1 text-xs font-semibold rounded px-2 py-[2px] w-fit ${badgeStyle[userProfile?.plan]}`}>
+              <p className={`mt-1 text-xs rounded px-2 py-[2px] w-fit ${badgeStyle[userProfile?.plan]}`}>
                 {displayPlan} Plan
               </p>
           </div>
-          <div className='w-10 h-10 rounded-lg bg-gradient-to-tr from-[#ffc165] to-[#9e53ee] flex items-center justify-center'>
+          <div className='w-10 h-10 rounded bg-gradient-to-tr from-[#ffc165] to-[#9e53ee] flex items-center justify-center'>
             <Gem className='w-5 text-color_9' />
           </div>
         </div>
       </div>
       {loading ? (
           <div className='flex justify-center items-center h-40'>
-            <span className='w-8 h-8 rounded-full border-4 border-t-transparent animate-spin text-color_5'></span>
             <p className='ml-3 text-color_4/70'>Loading your creations...</p>
           </div>
         ) : error ? (
@@ -233,8 +232,8 @@ const Dashboard = () => {
           </div>
         ) : (
       <div className='space-y-3 '>
-        <p className='mt-6 mb-4 text-color_4 text-lg font-semibold'>Recent Creations</p>
-        <div className='grid md:grid-cols-2 gap-6 cursor-pointer h-[110vh] hide-scrollbar overflow-y-scroll'>
+        <p className='mt-8 mb-2 text-color_4 text-lg font-semibold'>Recent Creations</p>
+        <div className='grid md:grid-cols-2 gap-6 cursor-pointer h-[80vh] hide-scrollbar overflow-y-scroll rounded'>
         {
           creations.map((item) => <CreationItems item={item} handleCopyContent={handleCopyContent} handleDeleteCreation={handleDeleteCreation}/>)
         }

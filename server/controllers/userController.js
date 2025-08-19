@@ -17,8 +17,6 @@ const getClerkUserId = (req) => {
     return req.user?.clerkUserId || null;
 };
 
-
-
 /* --- USER CREATIONS CONTROLLERS --- */
 export const getUserCreations = async (req, res) => {
     try {

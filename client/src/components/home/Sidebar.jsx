@@ -63,7 +63,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
   return (
     <div
       className={`
-        w-72 bg-color_9 border-r border-color_6/30 flex flex-col justify-between items-center fixed top-[64px] bottom-0 z-[90] transition-transform duration-300 ease-in-out overflow-y-scroll hide-scrollbar shadow-md
+        w-72 bg-color_9 border-r border-color_6/30 flex flex-col justify-between items-center fixed top-[64px] bottom-0 z-[90] transition-transform duration-300 ease-in-out overflow-y-scroll h-screen hide-scrollbar shadow-md
         ${sidebar ? 'translate-x-0' : '-translate-x-full'}
         lg:translate-x-0 lg:static lg:flex
       `}
@@ -84,16 +84,16 @@ const Sidebar = ({ sidebar, setSidebar }) => {
                 {category === 'other' ? 'Others' : category.charAt(0).toUpperCase() + category.slice(1)}
               </p>
               <div className="flex flex-col gap-2">
-                {items.map(({ to, label, Icon }) => (
+                {items.map(({ to, label, Icon}) => (
                   <NavLink
                     key={label}
                     to={to}
                     onClick={() => setSidebar(false)}
                     className={({ isActive }) =>
-                      `px-3.5 py-2.5 flex items-center gap-3 rounded-full transition-all duration-200 font-medium ${
+                      `px-3.5 py-2 flex items-center gap-3 rounded-full transition-all duration-200 font-medium text-sm  border ${
                         isActive
-                          ? 'bg-gradient-3 text-color_9 '
-                          : 'text-color_4 hover:bg-color_6/20 '
+                          ? '  cursor-pointer bg-blue-200 text-blue-700  border-blue-500 font-semibold '
+                          : 'text-color_4 hover:bg-blue-200/80 border-blue-200/80 '
                       }`
                     }
                   >
@@ -122,7 +122,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
             )}
             <div>
               <h1 className="text-sm font-semibold text-color_4">{clerkUser?.fullName || clerkUser?.username || 'User'}</h1>
-              <p className={`mt-1 text-xs font-semibold rounded px-2 py-[2px] w-fit ${badgeStyle[plan]}`}>
+              <p className={`mt-1 text-xs rounded px-2 py-[2px] text-color_9 w-fit ${badgeStyle[plan]}`}>
                 {displayPlan} Plan
               </p>
             </div>

@@ -1,5 +1,5 @@
 import { Link, useNavigate } from 'react-router-dom';
-import genora from '../../assets/genora-2.png';
+import genora from '../../assets/logo.png';
 const Logo = () => {
   const navigate = useNavigate()
   return (

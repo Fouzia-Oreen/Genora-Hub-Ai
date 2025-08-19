@@ -1,16 +1,13 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable react-hooks/exhaustive-deps */
 import { useAuth } from '@clerk/clerk-react';
 import axios from 'axios';
-import { ArrowLeft, LucideCirclePlus, Sparkles } from 'lucide-react';
+import { LucideCirclePlus, Sparkles } from 'lucide-react';
 import moment from 'moment';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { sampleResumeData } from '../../../assets/assets';
+import toast from 'react-hot-toast';
 import CreateResumeForm from '../../../components/resumeBuilt/resumeSections/CreateResumeForm';
 import ModalSmall from '../../../components/resumeBuilt/resumeSections/ModalSmall';
 import ResumeCard from '../../../components/resumeBuilt/resumeSections/ResumeCards';
-import toast from 'react-hot-toast';
 
 axios.defaults.baseURL = import.meta.env.VITE_BASE_URL;
 
@@ -19,7 +16,6 @@ const BuiltYourResume = () => {
   const [allResumes, setAllResumes] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [selectedTemplate, setSelectedTemplate] = useState(null);
 
   const { getToken } = useAuth();
   const navigate = useNavigate();
@@ -32,7 +28,6 @@ const BuiltYourResume = () => {
       const { data } = await axios.get('/api/resume', {
         headers: { Authorization: `Bearer ${token}` },
       });
-      
       setAllResumes(data.resumes);
     } catch (err) {
       console.error("Error fetching resumes:", err);
@@ -64,27 +59,9 @@ const BuiltYourResume = () => {
   }, []);
 
 
-  const handleBack = () => {
-    setSelectedTemplate(null);
-  };
-
-  if (selectedTemplate) {
-    const TemplateComponent = selectedTemplate.component;
-    return (
-      <div className="bg-gray-100 p-8 min-h-screen">
-        <button
-          onClick={handleBack}
-          className="mb-6 px-4 flex gap-2 py-2 items-center btn-add"
-        >
-          <ArrowLeft size={16} /> Back to Templates
-        </button>
-        <TemplateComponent data={sampleResumeData} />
-      </div>
-    );
-  }
 
   return (
-    <div className="flex-1 flex flex-col gap-4 p-6 mt-20 lg:mx-12 md:mt-12 overflow-y-scroll hide-scrollbar">
+    <div className="flex-1 flex flex-col gap-4 p-6 mt-20 lg:mx-12 md:mt-12 overflow-y-scroll hide-scrollbar ">
       <div className="flex flex-col md:flex-row justify-between md:items-center mb-8 gap-4">
         <div className='flex items-center gap-3'>
           <Sparkles className="w-5 h-5 text-color_5 animate-sparkle" />
@@ -99,32 +76,41 @@ const BuiltYourResume = () => {
         </button>
       </div>
 
-      {error && (
-        <div className=" text-red-700 px-4 py-3 rounded-xl relative mb-6" role="alert">
+      {loading ? (
+        <div className="flex justify-center items-center py-20">
+          <div className="animate-spin rounded-full h-4 w-4 border-t-2 border-b-2 border-color_5"></div>
+        </div>
+      ) : error ? (
+        <div className="text-red-700 px-4 py-3 rounded-xl relative mb-6" role="alert">
           <span className="block sm:inline ml-2">{error}</span>
         </div>
-      )}
-
-      <div className="p-8 ">
-        <div className="grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
-          {allResumes?.length > 0 ? (
-            allResumes.map((resume) => (
-              <ResumeCard
-                key={resume._id}
-                imgUrl={resume.thumbnailLink || null}
-                title={resume.title}
-                profileInfo={resume.profileInfo?.fullName || "Unnamed"}
-                lastUpdated={resume.updatedAt ? moment(resume.updatedAt).format("Do MMMM YYYY") : ""}
-                onSelect={() => navigate(`/ai/resume/${resume._id}`)} 
-                onDelete={() => handleDeleteResume(resume._id)}
-              />
-            ))
-          ) : (
-            <p className="text-center flex items-center justify-center">No resumes found. Create your first one!</p>
-          )}
+      ) : (
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 gap-6 ">
+            {allResumes?.length > 0 ? (
+              allResumes.map((resume) => (
+                <ResumeCard
+                  key={resume._id}
+                  imgUrl={resume.thumbnailLink || null}
+                  title={resume.title}
+                  profileInfo={resume.profileInfo?.fullName || "Unnamed"}
+                  lastUpdated={
+                    resume.updatedAt
+                      ? moment(resume.updatedAt).format("Do MMMM YYYY")
+                      : ""
+                  }
+                  onSelect={() => navigate(`/ai/resume/${resume._id}`)}
+                  onDelete={() => handleDeleteResume(resume._id)}
+                />
+              ))
+            ) : (
+              <p className="text-center flex items-center justify-center w-fit bg-slate-300">
+                No resumes found. Create your first one!
+              </p>
+            )}
+          </div>
         </div>
-      </div>
-
+      )}
       <ModalSmall
         isOpen={openCreateModal}
         onClose={() => setOpenCreateModal(false)}

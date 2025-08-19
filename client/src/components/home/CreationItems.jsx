@@ -8,9 +8,8 @@ const CreationItems = ({item, handleDeleteCreation, handleCopyContent }) => {
   const [expanded, setExpanded] = useState(false);
 
   return (
-    <div className='p-4  text-sm bg-color_9 border border-color_6/30 rounded-lg cursor-pointer' onClick={() => setExpanded(!expanded)}>
+    <div className='p-4 rounded text-sm bg-color_9 border border-color_6/30 cursor-pointer' onClick={() => setExpanded(!expanded)}>
       <div className='flex items-start justify-between gap-4'>
-
         <div>
             <h2 className='text-color_4 font-medium max-h-20 overflow-y-auto hide-scrollbar '><strong className='text-base'>Prompt :</strong> {item.prompt}</h2>
         <div className='flex flex-col items-start lg:flex-row lg:items-center mt-2 lg:gap-4 gap-1'>

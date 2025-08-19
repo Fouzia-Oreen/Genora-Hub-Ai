@@ -32,7 +32,7 @@ app.use(helmet());
 
 const allowedOrigins = [
   process.env.FRONTEND_URL, 
-  'https://genoraai.vercel.app'
+  'https://genora-ai.vercel.app'
 ];
 
 const corsOptions = {

@@ -23,10 +23,10 @@ const AiTools = () => {
           <button
             key={cat.value}
             onClick={() => setActiveCategory(cat.value)}
-            className={`text-sm px-4  rounded-full border font-medium transition-all duration-300 ${
+            className={`text-sm px-4  rounded-full border font-medium transition-all duration-300 cursor-pointer ${
               activeCategory === cat.value
-                ? 'btn2-grad text-white font-bold'
-                : 'bg-transparent border-color_7  text-color_4 hover:bg-color_7/10 font-semibold'
+                ? '  py-1.5  bg-blue-200 text-blue-700  border-blue-500 font-semibold'
+                : ' py-1.5  border-blue-500/40'
             }`}
           >
             {cat.label}

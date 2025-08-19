@@ -68,7 +68,7 @@ const Hero = () => {
         </div>
 
         {/* Social Proof */}
-        <div className="flex items-center divide-x divide-gray-300 mt-8">
+        <div className="flex items-center  mt-8">
             <div className="flex -space-x-3 pr-3">
               <img src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?q=80&w=200" alt="image" className="w-12 h-12 rounded-full border-2 border-white hover:-translate-y-1 transition z-1" />
               <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200" alt="image" className="w-12 h-12 rounded-full border-2 border-white hover:-translate-y-1 transition z-[2]" />

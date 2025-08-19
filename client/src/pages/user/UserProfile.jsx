@@ -62,8 +62,8 @@ const UserProfile = () => {
   }
 
   return (
-    <div className='panel'>
-      <div className='rightPanel'>
+    <div className='md:h-screen h-full overflow-y-auto p-6  gap-4 lg:gap-8 xl:ml-12 mt-24 md:mt-12 items-center justify-center  lg:items-start'>
+      <div className='rightPanel mx-auto'>
         <div className='flex items-center gap-3 mb-6'>
           <Sparkles className='w-5 h-5 text-color_5 animate-sparkle' />
           <h1 className='text-2xl font-semibold'>Your Profile</h1>
