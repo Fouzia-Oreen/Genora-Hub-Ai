@@ -139,7 +139,7 @@ const TemplateSeven = ({resumeData, colorPalette, containerWidth}) => {
         )}
       </div>
     </div>
-      <div className="col-span-8  space-y-8">
+      <div className="col-span-8  space-y-5">
         {/* Summary */}
         <div>
             <Title text="Professional Summary" color={themeColors[1]} />

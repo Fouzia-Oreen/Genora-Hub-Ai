@@ -437,7 +437,10 @@ const EditResume = () => {
   // Update thumbnail and resume profile image
   const uploadResumeImages = async () => {
       try {
-        console.log("Resume ID:", resumeId);
+            if (!resumeId || !resumeRef.current) {
+              toast.error("Resume not ready for upload.");
+              return;
+            }
           setLoading(true);
           const token = await getToken();
 
@@ -446,7 +449,6 @@ const EditResume = () => {
 
           // 1. Upload Thumbnail
           const thumbnailFile = dataURLtoFile(imageDataUrl, `resume-${resumeId}.png`);
-          console.log("Thumbnail File:", thumbnailFile);
           const thumbnailFormData = new FormData();
           thumbnailFormData.append("thumbnail", thumbnailFile);
 
@@ -474,25 +476,29 @@ const EditResume = () => {
           await updateResumeDetails(thumbnailLink, profilePreviewUrl);
           
       } catch (error) {
-          console.error("Error Uploading Images", error);
-          toast.error("Error Uploading Images");
-          navigate("/ai");
+          toast.error(
+            error.response?.data?.message || "Error uploading images. Please try again."
+          );
+          navigate("/ai/resume-builder");
       } finally {
           setLoading(false);
       }
   };
   // upload the resume
   const updateResumeDetails = async (thumbnailLink, profilePreviewUrl) => {
+    if (!resumeId || !resumeData) {
+      console.error("Resume ID or data missing");
+      return;
+    }
     try {
       setLoading(true);
       const token = await getToken();
-      const response = await axios.put(`/api/resume/${resumeId}`, 
+      await axios.put(`/api/resume/${resumeId}`, 
         {  ...resumeData,
           thumbnailLink : thumbnailLink || "",
         profileInfo : { ...resumeData.profileInfo,
           profilePreviewUrl : profilePreviewUrl || ""
         }},{ headers: { 'Authorization': `Bearer ${token}`}})
-      console.log("updated resume" , response)
     } catch (error) {
       console.error("Error Capturing Images", error);
     } finally {
