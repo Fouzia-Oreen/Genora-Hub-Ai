@@ -58,7 +58,7 @@ const Sidebar = ({ sidebar, setSidebar }) => {
 
   const displayPlan = plan.charAt(0).toUpperCase() + plan.slice(1);
 
-  const displayProfileImage = userProfile?.profileImageUrl || clerkUser?.imageUrl;
+  const displayProfileImage = clerkUser?.imageUrl;
 
   return (
     <div

@@ -66,32 +66,14 @@ export const createResume = async (req, res) => {
     }
 };
 
-// export const getUsersResume = async (req, res) => {
-//     try {
-//         const mongoUserId = getMongoUserId(req);
-//         if (!mongoUserId) {
-//             return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
-//         }
-
-//         const userResumes = await Resume.find({ userId: mongoUserId }).lean();
-
-//         if (!userResumes || userResumes.length === 0) {
-//             return res.status(200).json({ success: true, message: 'No resumes found for this user.', resumes: [] });
-//         }
-
-//     } catch (error) {
-//         console.error('Error fetching user resumes:', error);
-//         res.status(500).json({ success: false, message: 'Error fetching user resumes', error: error.message });
-//     }
-// };
 export const getUsersResume = async (req, res) => {
   try {
-    const mongoUserId = req.user?._id; (req)
+    const mongoUserId = req.user?._id;
     if (!mongoUserId) {
       return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
     }
 
-    const userResumes = await Resume.find({ userId: mongoUserId }).lean();
+    const userResumes = await Resume.find({ userId: mongoUserId }).sort({updatedAt: -1}).lean();
 
     return res.status(200).json({
       success: true,
@@ -116,7 +98,7 @@ export const getResumesById = async (req, res) => {
             return res.status(401).json({ success: false, message: 'Unauthorized: User ID not found.' });
         }
         if (!resumeId) {
-            return res.status(400).json({ success: false, message: 'Resume ID is required.' });
+           return res.status(400).json({ success: false, message: 'Resume ID is required.' });
         }
 
         const resume = await Resume.findOne({ _id: resumeId, userId: mongoUserId }).lean();

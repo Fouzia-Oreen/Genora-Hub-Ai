@@ -47,7 +47,7 @@ const Layout = () => {
     fetchUserProfile();
   }, [fetchUserProfile]);
 
-  const displayProfileImage = userProfile?.profileImageUrl || clerkUser?.imageUrl;
+  const displayProfileImage =  clerkUser?.imageUrl;
 
   const { user, isLoaded } = useUser();
   const [sidebar, setSidebar] = useState(false);
