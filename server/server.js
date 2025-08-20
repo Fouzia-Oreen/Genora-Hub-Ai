@@ -70,13 +70,6 @@ app.use('/api/user', requireAuth(), userRoutes);
 app.use('/api/resume', requireAuth(), resumeRoutes);
 
 
-// --- ERROR HANDLING ---
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).send('Something broke!');
-});
-
-
 // --- START SERVER ---
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
