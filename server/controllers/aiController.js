@@ -1,6 +1,5 @@
 import OpenAI from 'openai'; 
 import fs from 'fs'; 
-// import pdf from 'pdf-parse';
 import mammoth from 'mammoth'; 
 import cloudinary from 'cloudinary'; 
 import axios from 'axios'; 
